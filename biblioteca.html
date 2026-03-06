@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca — Academia VeritasWay</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-pale: #F5E6C0;
+    --deep: #0E0B07;
+    --dark: #1A1510;
+    --mid: #2C2318;
+    --parch: #F9F3E8;
+    --muted: #8A7A62;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--deep);
+    color: var(--parch);
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 65%),
+      url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(14,11,7,0.97), rgba(14,11,7,0.7));
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+  }
+
+  .nav-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    color: var(--gold-pale);
+    text-decoration: none;
+    opacity: 0.65;
+    transition: opacity 0.3s, color 0.3s;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active { opacity: 1; color: var(--gold); }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    position: relative;
+    z-index: 1;
+    padding: 160px 80px 72px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .page-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0.8;
+  }
+
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 900;
+    color: var(--parch);
+    line-height: 0.95;
+    margin-bottom: 20px;
+  }
+
+  .page-title em { font-style: italic; color: var(--gold); }
+
+  .page-desc {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: var(--muted);
+    font-style: italic;
+    max-width: 520px;
+  }
+
+  /* ── SEARCH BAR ── */
+  .search-wrap {
+    position: relative;
+    z-index: 1;
+    padding: 0 80px 48px;
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    display: flex;
+    border: 1px solid rgba(201,168,76,0.25);
+    flex: 1;
+    max-width: 480px;
+  }
+
+  .search-box input {
+    flex: 1;
+    padding: 14px 20px;
+    background: rgba(26,21,16,0.8);
+    border: none;
+    outline: none;
+    color: var(--parch);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+  }
+
+  .search-box input::placeholder { color: var(--muted); opacity: 0.55; }
+
+  .search-box button {
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    color: var(--gold);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.25s;
+  }
+
+  .search-box button:hover { background: rgba(201,168,76,0.08); }
+
+  .filter-btn {
+    padding: 9px 22px;
+    border: 1px solid rgba(201,168,76,0.2);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .filter-btn:hover { border-color: rgba(201,168,76,0.5); color: var(--gold-pale); }
+  .filter-btn.active { background: rgba(201,168,76,0.1); border-color: var(--gold); color: var(--gold); }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 80px 48px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .div-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, rgba(201,168,76,0.2)); }
+  .div-line.r { background: linear-gradient(to left, transparent, rgba(201,168,76,0.2)); }
+  .div-mark { color: var(--gold); font-size: 0.9rem; opacity: 0.5; }
+
+  /* ── SECTION LABEL ── */
+  .sec-label {
+    position: relative;
+    z-index: 1;
+    padding: 0 80px 28px;
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .sec-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--parch);
+  }
+
+  .sec-count {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  /* ── CATEGORY CARDS (big) ── */
+  .categories-section {
+    position: relative;
+    z-index: 1;
+    padding: 0 80px 64px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: rgba(201,168,76,0.07);
+    margin-bottom: 2px;
+  }
+
+  .cat-card {
+    background: var(--deep);
+    padding: 44px 36px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background 0.35s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .cat-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .cat-card:hover { background: rgba(201,168,76,0.05); }
+  .cat-card:hover::before { transform: scaleX(1); }
+
+  .cat-glyph {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    display: block;
+    line-height: 1;
+  }
+
+  .cat-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--parch);
+    margin-bottom: 10px;
+  }
+
+  .cat-desc {
+    font-size: 0.92rem;
+    line-height: 1.8;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 24px;
+  }
+
+  .cat-count {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  /* ── ITEMS LIST ── */
+  .items-section {
+    position: relative;
+    z-index: 1;
+    padding: 0 80px 120px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: rgba(201,168,76,0.07);
+  }
+
+  .item-row {
+    background: var(--deep);
+    padding: 32px 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: center;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .item-row::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--gold);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+  }
+
+  .item-row:hover { background: rgba(201,168,76,0.04); }
+  .item-row:hover::before { transform: scaleY(1); }
+
+  .item-info { display: flex; align-items: center; gap: 28px; }
+
+  .item-type-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 0.52rem;
+    letter-spacing: 0.3em;
+    padding: 6px 14px;
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--gold);
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .item-type-badge.pdf { border-color: rgba(180,120,120,0.3); color: #C98A8A; }
+  .item-type-badge.artigo { border-color: rgba(120,160,180,0.3); color: #8AB4C8; }
+  .item-type-badge.comentario { border-color: rgba(120,180,120,0.3); color: #7AB87A; }
+
+  .item-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--parch);
+    margin-bottom: 4px;
+  }
+
+  .item-sub {
+    font-size: 0.88rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .item-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+
+  .item-btn {
+    padding: 10px 24px;
+    border: 1px solid rgba(201,168,76,0.25);
+    background: transparent;
+    color: var(--gold-pale);
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.25s;
+    white-space: nowrap;
+  }
+
+  .item-btn:hover { background: var(--gold); color: var(--deep); border-color: var(--gold); }
+  .item-btn.soon { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+
+  /* ── ANIMATIONS ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    padding: 48px 80px;
+    border-top: 1px solid rgba(201,168,76,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-logo { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.3em; color: var(--gold); opacity: 0.7; }
+  .footer-copy { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.2em; color: var(--muted); opacity: 0.4; text-transform: uppercase; }
+
+  /* ── MOBILE ── */
+  @media (max-width: 1000px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .page-header, .search-wrap, .section-divider, .sec-label,
+    .categories-section, .items-section, footer { padding-left: 24px; padding-right: 24px; }
+    .categories-grid { grid-template-columns: repeat(2, 1fr); }
+    .item-row { grid-template-columns: 1fr; }
+    .item-info { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+
+  @media (max-width: 600px) {
+    .categories-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Academia VeritasWay</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="cursos.html">Cursos</a></li>
+    <li><a href="biblioteca.html" class="active">Biblioteca</a></li>
+    <li><a href="#artigos">Artigos</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="login.html">Entrar</a></li>
+  </ul>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header">
+  <p class="page-label">Recursos de Estudo</p>
+  <h1 class="page-title">Biblio<em>teca</em></h1>
+  <p class="page-desc">Materiais de apoio, estudos, PDFs e conteúdos para fortalecer sua caminhada cristã.</p>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-box">
+    <input type="text" placeholder="Buscar material..." id="searchInput" oninput="filterItems()">
+    <button>🔍</button>
+  </div>
+  <button class="filter-btn active" onclick="setFilter('todos', this)">Todos</button>
+  <button class="filter-btn" onclick="setFilter('estudo', this)">Estudos</button>
+  <button class="filter-btn" onclick="setFilter('pdf', this)">PDFs</button>
+  <button class="filter-btn" onclick="setFilter('artigo', this)">Artigos</button>
+  <button class="filter-btn" onclick="setFilter('comentario', this)">Comentários</button>
+</div>
+
+<div class="section-divider">
+  <div class="div-line"></div>
+  <span class="div-mark">✦</span>
+  <div class="div-line r"></div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="sec-label fade-in">
+  <h2 class="sec-title">Categorias</h2>
+</div>
+
+<section class="categories-section fade-in">
+  <div class="categories-grid">
+    <a class="cat-card" href="#" onclick="setFilter('estudo', null); return false;">
+      <span class="cat-glyph">📖</span>
+      <h3 class="cat-name">Estudos Bíblicos</h3>
+      <p class="cat-desc">Conteúdos introdutórios sobre fé cristã, vida devocional e discipulado.</p>
+      <span class="cat-count">6 materiais</span>
+    </a>
+    <a class="cat-card" href="#" onclick="setFilter('pdf', null); return false;">
+      <span class="cat-glyph">📄</span>
+      <h3 class="cat-name">PDFs & Apostilas</h3>
+      <p class="cat-desc">Resumos e materiais de apoio para os alunos presenciais e online.</p>
+      <span class="cat-count">4 materiais</span>
+    </a>
+    <a class="cat-card" href="#" onclick="setFilter('artigo', null); return false;">
+      <span class="cat-glyph">✍</span>
+      <h3 class="cat-name">Artigos</h3>
+      <p class="cat-desc">Reflexões e textos sobre Bíblia, vida cristã e crescimento espiritual.</p>
+      <span class="cat-count">5 materiais</span>
+    </a>
+    <a class="cat-card" href="#" onclick="setFilter('comentario', null); return false;">
+      <span class="cat-glyph">🏛</span>
+      <h3 class="cat-name">Comentários Bíblicos</h3>
+      <p class="cat-desc">Estudos por livros da Bíblia, capítulo por capítulo.</p>
+      <span class="cat-count">Em breve</span>
+    </a>
+  </div>
+</section>
+
+<!-- ITEMS -->
+<div class="sec-label fade-in">
+  <h2 class="sec-title">Todos os Materiais</h2>
+  <span class="sec-count" id="itemCount">15 itens</span>
+</div>
+
+<section class="items-section">
+  <div class="items-list" id="itemsList">
+
+    <div class="item-row fade-in" data-cat="estudo" data-title="o que é a fé cristã">
+      <div class="item-info">
+        <span class="item-type-badge">Estudo</span>
+        <div>
+          <div class="item-title">O que é a Fé Cristã?</div>
+          <div class="item-sub">Introdução às doutrinas essenciais do evangelicalismo histórico</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Abrir</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="estudo" data-title="vida devocional">
+      <div class="item-info">
+        <span class="item-type-badge">Estudo</span>
+        <div>
+          <div class="item-title">Vida Devocional</div>
+          <div class="item-sub">Como cultivar o hábito da oração e leitura bíblica diária</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Abrir</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="estudo" data-title="discipulado cristão">
+      <div class="item-info">
+        <span class="item-type-badge">Estudo</span>
+        <div>
+          <div class="item-title">Discipulado Cristão</div>
+          <div class="item-sub">O chamado de Cristo e o modelo bíblico de discipulado</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Abrir</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="estudo" data-title="os sacramentos">
+      <div class="item-info">
+        <span class="item-type-badge">Estudo</span>
+        <div>
+          <div class="item-title">Os Sacramentos</div>
+          <div class="item-sub">Batismo e Ceia do Senhor — significado e prática bíblica</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Abrir</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="estudo" data-title="a doutrina da salvação">
+      <div class="item-info">
+        <span class="item-type-badge">Estudo</span>
+        <div>
+          <div class="item-title">A Doutrina da Salvação</div>
+          <div class="item-sub">Graça, fé, justificação e santificação nas Escrituras</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Abrir</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="estudo" data-title="escatologia introdução">
+      <div class="item-info">
+        <span class="item-type-badge">Estudo</span>
+        <div>
+          <div class="item-title">Introdução à Escatologia</div>
+          <div class="item-sub">O que a Bíblia diz sobre as últimas coisas</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Abrir</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="pdf" data-title="apostila fundamentos">
+      <div class="item-info">
+        <span class="item-type-badge pdf">PDF</span>
+        <div>
+          <div class="item-title">Apostila — Fundamentos da Fé</div>
+          <div class="item-sub">Material completo do curso introdutório · 48 páginas</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Baixar</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="pdf" data-title="resumo credos confessionais">
+      <div class="item-info">
+        <span class="item-type-badge pdf">PDF</span>
+        <div>
+          <div class="item-title">Resumo dos Grandes Credos</div>
+          <div class="item-sub">Niceia, Calcedônia e Confissão de Westminster · 20 páginas</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Baixar</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="pdf" data-title="guia hermenêutica">
+      <div class="item-info">
+        <span class="item-type-badge pdf">PDF</span>
+        <div>
+          <div class="item-title">Guia de Hermenêutica</div>
+          <div class="item-sub">Princípios práticos de interpretação bíblica · 32 páginas</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Baixar</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="pdf" data-title="plano leitura bíblia">
+      <div class="item-info">
+        <span class="item-type-badge pdf">PDF</span>
+        <div>
+          <div class="item-title">Plano de Leitura Anual da Bíblia</div>
+          <div class="item-sub">Leia toda a Bíblia em 365 dias com cronograma diário</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Baixar</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="artigo" data-title="por que ler a bíblia">
+      <div class="item-info">
+        <span class="item-type-badge artigo">Artigo</span>
+        <div>
+          <div class="item-title">Por que ler a Bíblia todos os dias?</div>
+          <div class="item-sub">A suficiência e autoridade das Escrituras na vida cristã</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Ler</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="artigo" data-title="oração e soberania divina">
+      <div class="item-info">
+        <span class="item-type-badge artigo">Artigo</span>
+        <div>
+          <div class="item-title">Oração e a Soberania Divina</div>
+          <div class="item-sub">Como orar com fé sabendo que Deus controla todas as coisas</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Ler</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="artigo" data-title="graça e obras">
+      <div class="item-info">
+        <span class="item-type-badge artigo">Artigo</span>
+        <div>
+          <div class="item-title">Graça e Obras: Uma Falsa Dicotomia?</div>
+          <div class="item-sub">Reflexão sobre Efésios 2.8–10 e a natureza da fé salvífica</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Ler</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="artigo" data-title="sofrimento cristão">
+      <div class="item-info">
+        <span class="item-type-badge artigo">Artigo</span>
+        <div>
+          <div class="item-title">O Sofrimento à Luz da Cruz</div>
+          <div class="item-sub">Por que Deus permite o sofrimento e como crescer nele</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Ler</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="artigo" data-title="comunhão dos santos">
+      <div class="item-info">
+        <span class="item-type-badge artigo">Artigo</span>
+        <div>
+          <div class="item-title">A Comunhão dos Santos</div>
+          <div class="item-sub">A importância da vida comunitária na igreja local</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn" href="#">Ler</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="comentario" data-title="comentário gênesis">
+      <div class="item-info">
+        <span class="item-type-badge comentario">Comentário</span>
+        <div>
+          <div class="item-title">Gênesis — Capítulo por Capítulo</div>
+          <div class="item-sub">Em desenvolvimento · disponível em breve</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn soon">Em breve</a>
+      </div>
+    </div>
+
+    <div class="item-row fade-in" data-cat="comentario" data-title="comentário joão">
+      <div class="item-info">
+        <span class="item-type-badge comentario">Comentário</span>
+        <div>
+          <div class="item-title">Evangelho de João — Capítulo por Capítulo</div>
+          <div class="item-sub">Em desenvolvimento · disponível em breve</div>
+        </div>
+      </div>
+      <div class="item-actions">
+        <a class="item-btn soon">Em breve</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Academia VeritasWay</span>
+  <span class="footer-copy">© 2026 — Todos os direitos reservados</span>
+</footer>
+
+<script>
+  let activeFilter = 'todos';
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 60);
+    });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  function setFilter(cat, btn) {
+    activeFilter = cat;
+    if (btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    applyFilters();
+  }
+
+  function filterItems() { applyFilters(); }
+
+  function applyFilters() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('#itemsList .item-row');
+    let visible = 0;
+    rows.forEach(row => {
+      const cat = row.dataset.cat || '';
+      const title = row.dataset.title || '';
+      const matchCat = activeFilter === 'todos' || cat === activeFilter;
+      const matchSearch = !query || title.includes(query);
+      const show = matchCat && matchSearch;
+      row.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    document.getElementById('itemCount').textContent = visible + (visible === 1 ? ' item' : ' itens');
+  }
+</script>
+
+</body>
+</html>
