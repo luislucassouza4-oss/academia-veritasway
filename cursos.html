@@ -2,56 +2,562 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Cursos - Academia VeritasWay</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cursos — Academia VeritasWay</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-pale: #F5E6C0;
+    --deep: #0E0B07;
+    --dark: #1A1510;
+    --mid: #2C2318;
+    --parch: #F9F3E8;
+    --muted: #8A7A62;
+  }
 
-body{
-background:#0E0B07;
-color:#F9F3E8;
-font-family:Arial;
-padding:60px;
-}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
 
-h1{
-color:#C9A84C;
-}
+  body {
+    background-color: var(--deep);
+    color: var(--parch);
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+  }
 
-.card{
-border:1px solid #C9A84C;
-padding:20px;
-margin-top:20px;
-max-width:400px;
-}
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 65%),
+      url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
 
-button{
-background:#C9A84C;
-border:none;
-padding:10px 20px;
-cursor:pointer;
-}
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(14,11,7,0.97), rgba(14,11,7,0.7));
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+  }
 
+  .nav-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    color: var(--gold-pale);
+    text-decoration: none;
+    opacity: 0.65;
+    transition: opacity 0.3s, color 0.3s;
+  }
+
+  .nav-links a:hover,
+  .nav-links a.active { opacity: 1; color: var(--gold); }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    position: relative;
+    z-index: 1;
+    padding: 160px 80px 80px;
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .header-left {}
+
+  .page-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0.8;
+  }
+
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 900;
+    color: var(--parch);
+    line-height: 0.95;
+  }
+
+  .page-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .page-desc {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: var(--muted);
+    font-style: italic;
+    max-width: 420px;
+  }
+
+  /* ── FILTERS ── */
+  .filters-bar {
+    position: relative;
+    z-index: 1;
+    padding: 0 80px 48px;
+    max-width: 1300px;
+    margin: 0 auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-btn {
+    padding: 9px 24px;
+    border: 1px solid rgba(201,168,76,0.2);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .filter-btn:hover {
+    border-color: rgba(201,168,76,0.5);
+    color: var(--gold-pale);
+  }
+
+  .filter-btn.active {
+    background: rgba(201,168,76,0.1);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* ── GRID ── */
+  .courses-section {
+    position: relative;
+    z-index: 1;
+    padding: 0 80px 120px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2px;
+    background: rgba(201,168,76,0.07);
+  }
+
+  .course-card {
+    background: var(--deep);
+    padding: 44px 40px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.35s;
+    cursor: pointer;
+  }
+
+  .course-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .course-card:hover { background: rgba(201,168,76,0.05); }
+  .course-card:hover::before { transform: scaleX(1); }
+
+  .card-badge {
+    display: inline-block;
+    padding: 5px 14px;
+    border: 1px solid rgba(201,168,76,0.25);
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 22px;
+    align-self: flex-start;
+  }
+
+  .card-badge.new {
+    border-color: rgba(122,184,122,0.4);
+    color: #7AB87A;
+  }
+
+  .card-badge.soon {
+    border-color: rgba(138,122,98,0.35);
+    color: var(--muted);
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--parch);
+    line-height: 1.25;
+    margin-bottom: 14px;
+  }
+
+  .card-desc {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: var(--muted);
+    font-style: italic;
+    flex: 1;
+    margin-bottom: 32px;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .meta-icon { font-size: 0.9rem; opacity: 0.7; }
+
+  .card-btn {
+    width: 100%;
+    padding: 15px;
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold-pale);
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .card-btn:hover {
+    background: var(--gold);
+    color: var(--deep);
+    border-color: var(--gold);
+  }
+
+  .card-btn.enrolled {
+    background: rgba(201,168,76,0.08);
+    border-color: rgba(201,168,76,0.5);
+    color: var(--gold);
+  }
+
+  .card-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  /* ── FEATURED CARD ── */
+  .course-card.featured {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    padding: 56px 56px;
+    background: rgba(201,168,76,0.04);
+  }
+
+  .featured-left {}
+  .featured-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .featured-ornament {
+    font-family: 'Playfair Display', serif;
+    font-size: 7rem;
+    font-weight: 900;
+    font-style: italic;
+    color: rgba(201,168,76,0.06);
+    line-height: 1;
+    margin-bottom: -20px;
+    display: block;
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 80px 40px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .div-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(201,168,76,0.2));
+  }
+
+  .div-line.r { background: linear-gradient(to left, transparent, rgba(201,168,76,0.2)); }
+  .div-mark { color: var(--gold); font-size: 0.9rem; opacity: 0.5; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    padding: 48px 80px;
+    border-top: 1px solid rgba(201,168,76,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .footer-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    opacity: 0.7;
+    text-transform: uppercase;
+  }
+
+  .footer-copy {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    opacity: 0.4;
+    text-transform: uppercase;
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .page-header, .filters-bar, .courses-section, .section-divider, footer {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+    .course-card.featured {
+      grid-column: span 1;
+      grid-template-columns: 1fr;
+    }
+    .featured-ornament { display: none; }
+    .courses-grid { grid-template-columns: 1fr; }
+  }
 </style>
-
 </head>
-
 <body>
 
-<h1>Cursos da Academia VeritasWay</h1>
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Academia VeritasWay</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="cursos.html" class="active">Cursos</a></li>
+    <li><a href="#biblioteca">Biblioteca</a></li>
+    <li><a href="#artigos">Artigos</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="login.html">Entrar</a></li>
+  </ul>
+</nav>
 
-<div class="card">
-
-<h2>Fundamentos da Fé Cristã</h2>
-
-<p>
-Curso introdutório para novos convertidos e discípulos que desejam crescer na fé.
-</p>
-
-<p>Duração: 4 semanas</p>
-
-<button>Participar</button>
-
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="header-left">
+    <p class="page-label">Formação Bíblica</p>
+    <h1 class="page-title">Nossos<br><em>Cursos</em></h1>
+    <p class="page-desc">Trilhas de estudo organizadas para te acompanhar do início ao aprofundamento teológico.</p>
+  </div>
 </div>
+
+<!-- FILTERS -->
+<div class="filters-bar">
+  <button class="filter-btn active" onclick="filterCards('todos', this)">Todos</button>
+  <button class="filter-btn" onclick="filterCards('iniciante', this)">Iniciante</button>
+  <button class="filter-btn" onclick="filterCards('intermediario', this)">Intermediário</button>
+  <button class="filter-btn" onclick="filterCards('avancado', this)">Avançado</button>
+  <button class="filter-btn" onclick="filterCards('vida-crista', this)">Vida Cristã</button>
+  <button class="filter-btn" onclick="filterCards('teologia', this)">Teologia</button>
+</div>
+
+<div class="section-divider">
+  <div class="div-line"></div>
+  <span class="div-mark">✦</span>
+  <div class="div-line r"></div>
+</div>
+
+<!-- COURSES GRID -->
+<section class="courses-section">
+  <div class="courses-grid" id="coursesGrid">
+
+    <!-- FEATURED -->
+    <div class="course-card featured fade-in" data-cat="iniciante teologia">
+      <div class="featured-left">
+        <span class="card-badge new">Recomendado</span>
+        <h2 class="card-title">Fundamentos<br>da Fé Cristã</h2>
+        <p class="card-desc">Um curso introdutório e completo para novos convertidos e discípulos que desejam crescer na fé. Abordamos as doutrinas essenciais do evangelicalismo histórico com clareza e fidelidade às Escrituras.</p>
+        <div class="card-meta">
+          <span class="meta-item"><span class="meta-icon">📅</span> 4 semanas</span>
+          <span class="meta-item"><span class="meta-icon">📖</span> 16 aulas</span>
+          <span class="meta-item"><span class="meta-icon">◯</span> Iniciante</span>
+        </div>
+        <button class="card-btn enrolled">✓ Inscrito — Continuar</button>
+      </div>
+      <div class="featured-right">
+        <span class="featured-ornament">Fé</span>
+        <p style="font-style:italic; font-size:1rem; color:var(--muted); line-height:1.8; margin-bottom:16px;">«Ora a fé é o firme fundamento das coisas que se esperam, e a prova das coisas que não se veem.»</p>
+        <p style="font-family:'Cinzel',serif; font-size:0.55rem; letter-spacing:0.35em; color:var(--gold); opacity:0.6;">Hebreus 11:1</p>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="course-card fade-in" data-cat="vida-crista iniciante">
+      <span class="card-badge">Vida Cristã</span>
+      <h3 class="card-title">Vida de Oração</h3>
+      <p class="card-desc">Aprofunde sua comunhão com Deus. Estudamos os modelos bíblicos de oração e como desenvolver uma prática consistente e transformadora.</p>
+      <div class="card-meta">
+        <span class="meta-item"><span class="meta-icon">📅</span> 3 semanas</span>
+        <span class="meta-item"><span class="meta-icon">📖</span> 12 aulas</span>
+      </div>
+      <button class="card-btn" onclick="this.textContent='✓ Inscrito'; this.classList.add('enrolled')">Participar</button>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="course-card fade-in" data-cat="teologia intermediario">
+      <span class="card-badge">Teologia Histórica</span>
+      <h3 class="card-title">Os Grandes Credos da Igreja</h3>
+      <p class="card-desc">Uma jornada pelos confessionais e credos que moldaram o cristianismo: Niceia, Calcedônia, Apostólico e as Confissões Reformadas.</p>
+      <div class="card-meta">
+        <span class="meta-item"><span class="meta-icon">📅</span> 6 semanas</span>
+        <span class="meta-item"><span class="meta-icon">📖</span> 20 aulas</span>
+      </div>
+      <button class="card-btn" onclick="this.textContent='✓ Inscrito'; this.classList.add('enrolled')">Participar</button>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="course-card fade-in" data-cat="teologia intermediario">
+      <span class="card-badge">Hermenêutica</span>
+      <h3 class="card-title">Como Interpretar a Bíblia</h3>
+      <p class="card-desc">Princípios e métodos para uma leitura fiel, contextualizada e transformadora das Escrituras Sagradas.</p>
+      <div class="card-meta">
+        <span class="meta-item"><span class="meta-icon">📅</span> 5 semanas</span>
+        <span class="meta-item"><span class="meta-icon">📖</span> 18 aulas</span>
+      </div>
+      <button class="card-btn" onclick="this.textContent='✓ Inscrito'; this.classList.add('enrolled')">Participar</button>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="course-card fade-in" data-cat="vida-crista intermediario">
+      <span class="card-badge">Discipulado</span>
+      <h3 class="card-title">Formação de Discípulos</h3>
+      <p class="card-desc">Como caminhar com outros cristãos no processo de crescimento espiritual. Metodologia bíblica para o discipulado prático.</p>
+      <div class="card-meta">
+        <span class="meta-item"><span class="meta-icon">📅</span> 4 semanas</span>
+        <span class="meta-item"><span class="meta-icon">📖</span> 14 aulas</span>
+      </div>
+      <button class="card-btn" onclick="this.textContent='✓ Inscrito'; this.classList.add('enrolled')">Participar</button>
+    </div>
+
+    <!-- Card 6 — Em breve -->
+    <div class="course-card fade-in" data-cat="teologia avancado" style="opacity:0.5; pointer-events:none;">
+      <span class="card-badge soon">Em breve</span>
+      <h3 class="card-title">Teologia Sistemática Avançada</h3>
+      <p class="card-desc">Um estudo profundo das grandes doutrinas cristãs: Bibliologia, Cristologia, Soteriologia, Escatologia e muito mais.</p>
+      <div class="card-meta">
+        <span class="meta-item"><span class="meta-icon">📅</span> 12 semanas</span>
+        <span class="meta-item"><span class="meta-icon">📖</span> 40 aulas</span>
+      </div>
+      <button class="card-btn" disabled>Disponível em breve</button>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Academia VeritasWay</span>
+  <span class="footer-copy">© 2026 — Todos os direitos reservados</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Filter
+  function filterCards(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('.course-card').forEach(card => {
+      const cats = card.dataset.cat || '';
+      const show = cat === 'todos' || cats.includes(cat);
+      card.style.display = show ? '' : 'none';
+    });
+  }
+</script>
 
 </body>
 </html>
