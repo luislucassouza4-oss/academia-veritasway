@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alunos - Academia VeritasWay</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#0E0B07;
+      color:#F9F3E8;
+      padding:40px 20px;
+      margin:0;
+    }
+    .container{
+      max-width:900px;
+      margin:0 auto;
+    }
+    h1{
+      color:#C9A84C;
+    }
+    .menu{
+      margin-bottom:30px;
+    }
+    .menu a{
+      color:#C9A84C;
+      text-decoration:none;
+      margin-right:18px;
+    }
+    .box{
+      background:#1A1510;
+      border:1px solid rgba(201,168,76,0.25);
+      border-radius:12px;
+      padding:20px;
+      margin-bottom:20px;
+    }
+    input, select, button{
+      width:100%;
+      padding:12px;
+      margin-bottom:12px;
+      border-radius:8px;
+      border:1px solid rgba(201,168,76,0.25);
+      background:#0E0B07;
+      color:#F9F3E8;
+      box-sizing:border-box;
+    }
+    button{
+      background:#C9A84C;
+      color:#0E0B07;
+      font-weight:bold;
+      cursor:pointer;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:20px;
+    }
+    th, td{
+      border-bottom:1px solid rgba(201,168,76,0.15);
+      padding:12px;
+      text-align:left;
+    }
+    th{
+      color:#C9A84C;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="menu">
+      <a href="index.html">Início</a>
+      <a href="relatorios.html">Relatórios</a>
+      <a href="certificados.html">Certificados</a>
+    </div>
+
+    <h1>Cadastro de Alunos</h1>
+
+    <div class="box">
+      <input type="text" id="nome" placeholder="Nome do aluno">
+      <input type="email" id="email" placeholder="E-mail do aluno">
+      <select id="turma">
+        <option value="">Selecione a turma</option>
+      </select>
+      <button onclick="salvarAluno()">Salvar aluno</button>
+    </div>
+
+    <div class="box">
+      <h2>Lista de alunos</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Turma</th>
+          </tr>
+        </thead>
+        <tbody id="lista-alunos"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "COLE_AQUI_SUA_URL";
+    const SUPABASE_KEY = "COLE_AQUI_SUA_CHAVE_PUBLICA";
+
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function carregarTurmas() {
+      const { data, error } = await client.from("turmas").select("*").order("nome");
+      if (error) {
+        alert("Erro ao carregar turmas");
+        return;
+      }
+
+      const select = document.getElementById("turma");
+      select.innerHTML = '<option value="">Selecione a turma</option>';
+
+      data.forEach(turma => {
+        const option = document.createElement("option");
+        option.value = turma.id;
+        option.textContent = turma.nome;
+        select.appendChild(option);
+      });
+    }
+
+    async function carregarAlunos() {
+      const { data, error } = await client
+        .from("alunos")
+        .select("nome, email, turmas(nome)");
+
+      if (error) {
+        alert("Erro ao carregar alunos");
+        return;
+      }
+
+      const lista = document.getElementById("lista-alunos");
+      lista.innerHTML = "";
+
+      data.forEach(aluno => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${aluno.nome || ""}</td>
+          <td>${aluno.email || ""}</td>
+          <td>${aluno.turmas ? aluno.turmas.nome : ""}</td>
+        `;
+        lista.appendChild(tr);
+      });
+    }
+
+    async function salvarAluno() {
+      const nome = document.getElementById("nome").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const turma_id = document.getElementById("turma").value;
+
+      if (!nome) {
+        alert("Digite o nome do aluno");
+        return;
+      }
+
+      const { error } = await client.from("alunos").insert([
+        { nome, email, turma_id }
+      ]);
+
+      if (error) {
+        alert("Erro ao salvar aluno");
+        console.error(error);
+        return;
+      }
+
+      alert("Aluno salvo com sucesso!");
+      document.getElementById("nome").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("turma").value = "";
+
+      carregarAlunos();
+    }
+
+    carregarTurmas();
+    carregarAlunos();
+  </script>
+</body>
+</html>
