@@ -6,63 +6,77 @@
   <title>Alunos - Academia VeritasWay</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body{
+    body {
       font-family: Arial, sans-serif;
-      background:#0E0B07;
-      color:#F9F3E8;
-      padding:40px 20px;
-      margin:0;
+      background: #0E0B07;
+      color: #F9F3E8;
+      padding: 40px 20px;
+      margin: 0;
     }
-    .container{
-      max-width:900px;
-      margin:0 auto;
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
     }
-    h1{
-      color:#C9A84C;
+
+    h1, h2 {
+      color: #C9A84C;
     }
-    .menu{
-      margin-bottom:30px;
+
+    .menu {
+      margin-bottom: 30px;
     }
-    .menu a{
-      color:#C9A84C;
-      text-decoration:none;
-      margin-right:18px;
+
+    .menu a {
+      color: #C9A84C;
+      text-decoration: none;
+      margin-right: 18px;
     }
-    .box{
-      background:#1A1510;
-      border:1px solid rgba(201,168,76,0.25);
-      border-radius:12px;
-      padding:20px;
-      margin-bottom:20px;
+
+    .box {
+      background: #1A1510;
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
     }
-    input, select, button{
-      width:100%;
-      padding:12px;
-      margin-bottom:12px;
-      border-radius:8px;
-      border:1px solid rgba(201,168,76,0.25);
-      background:#0E0B07;
-      color:#F9F3E8;
-      box-sizing:border-box;
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(201, 168, 76, 0.25);
+      background: #0E0B07;
+      color: #F9F3E8;
+      box-sizing: border-box;
     }
-    button{
-      background:#C9A84C;
-      color:#0E0B07;
-      font-weight:bold;
-      cursor:pointer;
+
+    button {
+      background: #C9A84C;
+      color: #0E0B07;
+      font-weight: bold;
+      cursor: pointer;
     }
-    table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:20px;
+
+    button:hover {
+      opacity: 0.9;
     }
-    th, td{
-      border-bottom:1px solid rgba(201,168,76,0.15);
-      padding:12px;
-      text-align:left;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
     }
-    th{
-      color:#C9A84C;
+
+    th, td {
+      border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      color: #C9A84C;
     }
   </style>
 </head>
@@ -102,21 +116,26 @@
 
   <script>
     const SUPABASE_URL = "COLE_AQUI_SUA_URL";
-    const SUPABASE_KEY = "COLE_AQUI_SUA_CHAVE_PUBLICA";
+    const SUPABASE_KEY = "COLE_AQUI_SUA_PUBLISHABLE_KEY";
 
-    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function carregarTurmas() {
-      const { data, error } = await client.from("turmas").select("*").order("nome");
+      const { data, error } = await client
+        .from("turmas")
+        .select("id, nome")
+        .order("nome", { ascending: true });
+
       if (error) {
-        alert("Erro ao carregar turmas");
+        console.error("Erro ao carregar turmas:", error);
+        alert("Erro ao carregar turmas.");
         return;
       }
 
       const select = document.getElementById("turma");
       select.innerHTML = '<option value="">Selecione a turma</option>';
 
-      data.forEach(turma => {
+      data.forEach((turma) => {
         const option = document.createElement("option");
         option.value = turma.id;
         option.textContent = turma.nome;
@@ -127,22 +146,32 @@
     async function carregarAlunos() {
       const { data, error } = await client
         .from("alunos")
-        .select("nome, email, turmas(nome)");
+        .select(`
+          id,
+          nome,
+          email,
+          turma_id,
+          turmas (
+            nome
+          )
+        `)
+        .order("created_at", { ascending: false });
 
       if (error) {
-        alert("Erro ao carregar alunos");
+        console.error("Erro ao carregar alunos:", error);
+        alert("Erro ao carregar alunos.");
         return;
       }
 
       const lista = document.getElementById("lista-alunos");
       lista.innerHTML = "";
 
-      data.forEach(aluno => {
+      data.forEach((aluno) => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${aluno.nome || ""}</td>
           <td>${aluno.email || ""}</td>
-          <td>${aluno.turmas ? aluno.turmas.nome : ""}</td>
+          <td>${aluno.turmas?.nome || ""}</td>
         `;
         lista.appendChild(tr);
       });
@@ -151,29 +180,34 @@
     async function salvarAluno() {
       const nome = document.getElementById("nome").value.trim();
       const email = document.getElementById("email").value.trim();
-      const turma_id = document.getElementById("turma").value;
+      const turma_id = document.getElementById("turma").value || null;
 
       if (!nome) {
-        alert("Digite o nome do aluno");
+        alert("Digite o nome do aluno.");
         return;
       }
 
       const { error } = await client.from("alunos").insert([
-        { nome, email, turma_id }
+        {
+          nome,
+          email,
+          turma_id
+        }
       ]);
 
       if (error) {
-        alert("Erro ao salvar aluno");
-        console.error(error);
+        console.error("Erro ao salvar aluno:", error);
+        alert("Erro ao salvar aluno.");
         return;
       }
 
       alert("Aluno salvo com sucesso!");
+
       document.getElementById("nome").value = "";
       document.getElementById("email").value = "";
       document.getElementById("turma").value = "";
 
-      carregarAlunos();
+      await carregarAlunos();
     }
 
     carregarTurmas();
