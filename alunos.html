@@ -1,217 +1,380 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alunos - Academia VeritasWay</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0E0B07;
-      color: #F9F3E8;
-      padding: 40px 20px;
-      margin: 0;
-    }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    h1, h2 {
-      color: #C9A84C;
-    }
+<title>Academia VeritasWay • Alunos</title>
 
-    .menu {
-      margin-bottom: 30px;
-    }
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    .menu a {
-      color: #C9A84C;
-      text-decoration: none;
-      margin-right: 18px;
-    }
+<style>
 
-    .box {
-      background: #1A1510;
-      border: 1px solid rgba(201, 168, 76, 0.25);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
+body{
+background:#141210;
+color:#F9F3E8;
+font-family:Arial;
+margin:0;
+padding:0;
+}
 
-    input, select, button {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(201, 168, 76, 0.25);
-      background: #0E0B07;
-      color: #F9F3E8;
-      box-sizing: border-box;
-    }
+header{
+background:#1c1916;
+padding:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid #333;
+}
 
-    button {
-      background: #C9A84C;
-      color: #0E0B07;
-      font-weight: bold;
-      cursor: pointer;
-    }
+h1{
+color:#C9A84C;
+margin:0;
+}
 
-    button:hover {
-      opacity: 0.9;
-    }
+.container{
+max-width:1000px;
+margin:auto;
+padding:30px;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
+.card{
+background:#1c1916;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
+}
 
-    th, td {
-      border-bottom: 1px solid rgba(201, 168, 76, 0.15);
-      padding: 12px;
-      text-align: left;
-    }
+input,select{
+width:100%;
+padding:10px;
+margin-top:5px;
+margin-bottom:15px;
+background:#2a2723;
+border:none;
+color:white;
+border-radius:5px;
+}
 
-    th {
-      color: #C9A84C;
-    }
-  </style>
+button{
+background:#C9A84C;
+border:none;
+padding:10px 15px;
+border-radius:5px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid #333;
+text-align:left;
+}
+
+th{
+color:#C9A84C;
+}
+
+.action-btn{
+background:#333;
+color:white;
+margin-right:5px;
+}
+
+.delete{
+background:#8b2d2d;
+}
+
+</style>
+
 </head>
 <body>
-  <div class="container">
-    <div class="menu">
-      <a href="index.html">Início</a>
-      <a href="relatorios.html">Relatórios</a>
-      <a href="certificados.html">Certificados</a>
-    </div>
 
-    <h1>Cadastro de Alunos</h1>
+<header>
 
-    <div class="box">
-      <input type="text" id="nome" placeholder="Nome do aluno">
-      <input type="email" id="email" placeholder="E-mail do aluno">
-      <select id="turma">
-        <option value="">Selecione a turma</option>
-      </select>
-      <button onclick="salvarAluno()">Salvar aluno</button>
-    </div>
+<h1>Academia VeritasWay</h1>
 
-    <div class="box">
-      <h2>Lista de alunos</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Turma</th>
-          </tr>
-        </thead>
-        <tbody id="lista-alunos"></tbody>
-      </table>
-    </div>
-  </div>
+<button onclick="abrirNovo()">Novo Aluno</button>
 
-  <script>
-    const SUPABASE_URL = "COLE_AQUI_SUA_URL";
-    const SUPABASE_KEY = "COLE_AQUI_SUA_PUBLISHABLE_KEY";
+</header>
 
-    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<div class="container">
 
-    async function carregarTurmas() {
-      const { data, error } = await client
-        .from("turmas")
-        .select("id, nome")
-        .order("nome", { ascending: true });
+<div class="card">
 
-      if (error) {
-        console.error("Erro ao carregar turmas:", error);
-        alert("Erro ao carregar turmas.");
-        return;
-      }
+<h2>Buscar</h2>
 
-      const select = document.getElementById("turma");
-      select.innerHTML = '<option value="">Selecione a turma</option>';
+<input id="busca" placeholder="Buscar aluno..." oninput="render()">
 
-      data.forEach((turma) => {
-        const option = document.createElement("option");
-        option.value = turma.id;
-        option.textContent = turma.nome;
-        select.appendChild(option);
-      });
-    }
+<select id="filtroTurma" onchange="render()">
+<option value="">Todas as turmas</option>
+</select>
 
-    async function carregarAlunos() {
-      const { data, error } = await client
-        .from("alunos")
-        .select(`
-          id,
-          nome,
-          email,
-          turma_id,
-          turmas (
-            nome
-          )
-        `)
-        .order("created_at", { ascending: false });
+</div>
 
-      if (error) {
-        console.error("Erro ao carregar alunos:", error);
-        alert("Erro ao carregar alunos.");
-        return;
-      }
+<div class="card">
 
-      const lista = document.getElementById("lista-alunos");
-      lista.innerHTML = "";
+<h2>Alunos</h2>
 
-      data.forEach((aluno) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${aluno.nome || ""}</td>
-          <td>${aluno.email || ""}</td>
-          <td>${aluno.turmas?.nome || ""}</td>
-        `;
-        lista.appendChild(tr);
-      });
-    }
+<table>
 
-    async function salvarAluno() {
-      const nome = document.getElementById("nome").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const turma_id = document.getElementById("turma").value || null;
+<thead>
 
-      if (!nome) {
-        alert("Digite o nome do aluno.");
-        return;
-      }
+<tr>
+<th>Nome</th>
+<th>Email</th>
+<th>Turma</th>
+<th>Ações</th>
+</tr>
 
-      const { error } = await client.from("alunos").insert([
-        {
-          nome,
-          email,
-          turma_id
-        }
-      ]);
+</thead>
 
-      if (error) {
-        console.error("Erro ao salvar aluno:", error);
-        alert("Erro ao salvar aluno.");
-        return;
-      }
+<tbody id="lista"></tbody>
 
-      alert("Aluno salvo com sucesso!");
+</table>
 
-      document.getElementById("nome").value = "";
-      document.getElementById("email").value = "";
-      document.getElementById("turma").value = "";
+</div>
 
-      await carregarAlunos();
-    }
+</div>
 
-    carregarTurmas();
-    carregarAlunos();
-  </script>
+<div id="modal" style="display:none">
+
+<div style="position:fixed;inset:0;background:black;opacity:.6"></div>
+
+<div style="
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#1c1916;
+padding:30px;
+border-radius:10px;
+width:350px;
+">
+
+<h2 id="tituloModal">Novo aluno</h2>
+
+<input id="nome" placeholder="Nome">
+
+<input id="email" placeholder="Email">
+
+<select id="turma"></select>
+
+<button onclick="salvar()">Salvar</button>
+<button onclick="fecharModal()">Cancelar</button>
+
+</div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL = "COLE_AQUI_URL";
+const SUPABASE_KEY = "COLE_AQUI_KEY";
+
+const client = supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+
+let alunos=[]
+let turmas=[]
+let editando=null
+
+async function carregarTurmas(){
+
+let {data}=await client
+.from("turmas")
+.select("*")
+
+turmas=data||[]
+
+const select=document.getElementById("turma")
+const filtro=document.getElementById("filtroTurma")
+
+select.innerHTML=""
+filtro.innerHTML='<option value="">Todas as turmas</option>'
+
+turmas.forEach(t=>{
+
+select.innerHTML+=`<option value="${t.id}">${t.nome}</option>`
+
+filtro.innerHTML+=`<option value="${t.id}">${t.nome}</option>`
+
+})
+
+}
+
+async function carregarAlunos(){
+
+let {data}=await client
+.from("alunos")
+.select("*")
+.order("created_at",{ascending:false})
+
+alunos=data||[]
+
+render()
+
+}
+
+function turmaNome(id){
+
+let t=turmas.find(x=>x.id==id)
+
+return t?t.nome:"-"
+
+}
+
+function render(){
+
+let busca=document.getElementById("busca").value.toLowerCase()
+
+let turma=document.getElementById("filtroTurma").value
+
+let lista=alunos.filter(a=>{
+
+let okBusca=!busca||a.nome.toLowerCase().includes(busca)
+
+let okTurma=!turma||a.turma_id==turma
+
+return okBusca&&okTurma
+
+})
+
+const tbody=document.getElementById("lista")
+
+tbody.innerHTML=""
+
+lista.forEach(a=>{
+
+tbody.innerHTML+=`
+
+<tr>
+
+<td>${a.nome}</td>
+
+<td>${a.email}</td>
+
+<td>${turmaNome(a.turma_id)}</td>
+
+<td>
+
+<button class="action-btn" onclick="editar('${a.id}')">Editar</button>
+
+<button class="action-btn delete" onclick="excluir('${a.id}')">Excluir</button>
+
+</td>
+
+</tr>
+
+`
+
+})
+
+}
+
+function abrirNovo(){
+
+editando=null
+
+document.getElementById("tituloModal").innerText="Novo aluno"
+
+document.getElementById("nome").value=""
+document.getElementById("email").value=""
+document.getElementById("modal").style.display="block"
+
+}
+
+function editar(id){
+
+let a=alunos.find(x=>x.id==id)
+
+editando=id
+
+document.getElementById("tituloModal").innerText="Editar aluno"
+
+document.getElementById("nome").value=a.nome
+document.getElementById("email").value=a.email
+document.getElementById("turma").value=a.turma_id
+
+document.getElementById("modal").style.display="block"
+
+}
+
+function fecharModal(){
+
+document.getElementById("modal").style.display="none"
+
+}
+
+async function salvar(){
+
+let nome=document.getElementById("nome").value
+let email=document.getElementById("email").value
+let turma=document.getElementById("turma").value
+
+if(!nome||!email){
+
+alert("Preencha nome e email")
+
+return
+
+}
+
+if(editando){
+
+await client
+.from("alunos")
+.update({nome,email,turma_id:turma})
+.eq("id",editando)
+
+}else{
+
+await client
+.from("alunos")
+.insert({nome,email,turma_id:turma})
+
+}
+
+fecharModal()
+
+await carregarAlunos()
+
+}
+
+async function excluir(id){
+
+if(!confirm("Excluir aluno?"))return
+
+await client
+.from("alunos")
+.delete()
+.eq("id",id)
+
+await carregarAlunos()
+
+}
+
+async function init(){
+
+await carregarTurmas()
+
+await carregarAlunos()
+
+}
+
+init()
+
+</script>
+
 </body>
 </html>
