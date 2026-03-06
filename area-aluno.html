@@ -3,83 +3,638 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Área do Aluno - Academia VeritasWay</title>
-
+<title>Área do Aluno — Academia VeritasWay</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-pale: #F5E6C0;
+    --deep: #0E0B07;
+    --dark: #1A1510;
+    --mid: #2C2318;
+    --parch: #F9F3E8;
+    --muted: #8A7A62;
+  }
 
-body{
-background:#0E0B07;
-color:#F9F3E8;
-font-family:Arial;
-padding:40px;
-}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-h1{
-color:#C9A84C;
-}
+  body {
+    background-color: var(--deep);
+    color: var(--parch);
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+    display: flex;
+  }
 
-.menu{
-margin-bottom:40px;
-}
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
 
-.menu a{
-margin-right:20px;
-color:#C9A84C;
-text-decoration:none;
-}
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 260px;
+    height: 100vh;
+    background: var(--dark);
+    border-right: 1px solid rgba(201,168,76,0.12);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    padding: 0 0 32px;
+  }
 
-.card{
-border:1px solid #C9A84C;
-padding:20px;
-margin-bottom:20px;
-max-width:500px;
-}
+  .sidebar-brand {
+    padding: 36px 32px 32px;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
 
-button{
-background:#C9A84C;
-border:none;
-padding:10px 20px;
-cursor:pointer;
-}
+  .sidebar-brand-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
 
+  .sidebar-brand-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .sidebar-nav {
+    padding: 32px 0;
+    flex: 1;
+  }
+
+  .sidebar-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding: 0 32px;
+    margin-bottom: 12px;
+    opacity: 0.6;
+  }
+
+  .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 32px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 1rem;
+    letter-spacing: 0.03em;
+    transition: all 0.25s;
+    border-left: 2px solid transparent;
+    position: relative;
+  }
+
+  .sidebar-nav a:hover {
+    color: var(--gold-pale);
+    background: rgba(201,168,76,0.04);
+    border-left-color: rgba(201,168,76,0.3);
+  }
+
+  .sidebar-nav a.active {
+    color: var(--gold);
+    background: rgba(201,168,76,0.06);
+    border-left-color: var(--gold);
+  }
+
+  .sidebar-nav a .icon { font-size: 1rem; width: 20px; text-align: center; }
+
+  .sidebar-divider {
+    height: 1px;
+    background: rgba(201,168,76,0.08);
+    margin: 16px 32px;
+  }
+
+  .sidebar-user {
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-top: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .user-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--mid), var(--gold));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    color: var(--parch);
+    flex-shrink: 0;
+  }
+
+  .user-info-name {
+    font-size: 0.95rem;
+    color: var(--parch);
+    font-weight: 600;
+  }
+
+  .user-info-role {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: 260px;
+    flex: 1;
+    padding: 56px 60px;
+    position: relative;
+    z-index: 1;
+    max-width: calc(100vw - 260px);
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 56px;
+  }
+
+  .page-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.45em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.8;
+  }
+
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 900;
+    color: var(--parch);
+    line-height: 1;
+  }
+
+  .page-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .notif-btn {
+    width: 40px; height: 40px;
+    border: 1px solid rgba(201,168,76,0.2);
+    background: transparent;
+    color: var(--muted);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s;
+  }
+
+  .notif-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* ── STATS ROW ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-bottom: 56px;
+    background: rgba(201,168,76,0.08);
+  }
+
+  .stat-card {
+    background: var(--deep);
+    padding: 32px 36px;
+    transition: background 0.3s;
+  }
+
+  .stat-card:hover { background: rgba(201,168,76,0.04); }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── SECTION HEADER ── */
+  .sec-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .sec-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--parch);
+  }
+
+  .sec-link {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--gold);
+    text-decoration: none;
+    opacity: 0.75;
+    transition: opacity 0.2s;
+  }
+
+  .sec-link:hover { opacity: 1; }
+
+  /* ── COURSE CARDS ── */
+  .courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2px;
+    margin-bottom: 60px;
+    background: rgba(201,168,76,0.08);
+  }
+
+  .course-card {
+    background: var(--deep);
+    padding: 36px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: pointer;
+  }
+
+  .course-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    height: 2px;
+    width: 0;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+
+  .course-card:hover { background: rgba(201,168,76,0.05); }
+  .course-card:hover::after { width: 100%; }
+
+  .course-category {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0.7;
+  }
+
+  .course-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--parch);
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .course-desc {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 28px;
+  }
+
+  .course-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .course-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+
+  .status-active .status-dot { background: var(--gold); }
+  .status-active { color: var(--gold); }
+  .status-available .status-dot { background: var(--muted); }
+  .status-available { color: var(--muted); }
+  .status-done .status-dot { background: #7AB87A; }
+  .status-done { color: #7AB87A; }
+
+  .course-progress-wrap {
+    margin-bottom: 24px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .progress-bar {
+    height: 2px;
+    background: rgba(201,168,76,0.15);
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 1s ease;
+  }
+
+  .course-btn {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold-pale);
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .course-btn:hover {
+    background: var(--gold);
+    color: var(--deep);
+    border-color: var(--gold);
+  }
+
+  .course-btn.primary {
+    background: rgba(201,168,76,0.1);
+    border-color: rgba(201,168,76,0.5);
+  }
+
+  /* ── VERSE BANNER ── */
+  .verse-banner {
+    border: 1px solid rgba(201,168,76,0.15);
+    background: rgba(201,168,76,0.03);
+    padding: 40px 48px;
+    text-align: center;
+    margin-bottom: 60px;
+    position: relative;
+  }
+
+  .verse-banner::before {
+    content: '❝';
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2.5rem;
+    color: var(--gold);
+    background: var(--deep);
+    padding: 0 12px;
+    line-height: 1;
+  }
+
+  .verse-text {
+    font-size: 1.2rem;
+    font-style: italic;
+    line-height: 1.9;
+    color: var(--gold-pale);
+    margin-bottom: 12px;
+  }
+
+  .verse-ref {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in:nth-child(1) { animation-delay: 0.05s; }
+  .fade-in:nth-child(2) { animation-delay: 0.15s; }
+  .fade-in:nth-child(3) { animation-delay: 0.25s; }
+
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; max-width: 100vw; padding: 32px 24px; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .courses-grid { grid-template-columns: 1fr; }
+  }
 </style>
-
 </head>
-
 <body>
 
-<h1>Minha Área</h1>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="sidebar-brand-name">Academia VeritasWay</span>
+    <span class="sidebar-brand-sub">Área do Aluno</span>
+  </div>
 
-<div class="menu">
+  <nav class="sidebar-nav">
+    <p class="sidebar-label">Principal</p>
+    <a href="area-aluno.html" class="active">
+      <span class="icon">⊞</span> Painel
+    </a>
+    <a href="cursos.html">
+      <span class="icon">📖</span> Meus Cursos
+    </a>
+    <a href="biblioteca.html">
+      <span class="icon">🏛</span> Biblioteca
+    </a>
+    <a href="certificados.html">
+      <span class="icon">🎓</span> Certificados
+    </a>
 
-<a href="cursos.html">Meus Cursos</a>
+    <div class="sidebar-divider"></div>
+    <p class="sidebar-label">Conta</p>
+    <a href="perfil.html">
+      <span class="icon">◯</span> Perfil
+    </a>
+    <a href="configuracoes.html">
+      <span class="icon">⚙</span> Configurações
+    </a>
+    <a href="index.html">
+      <span class="icon">←</span> Sair
+    </a>
+  </nav>
 
-<a href="biblioteca.html">Biblioteca</a>
+  <div class="sidebar-user">
+    <div class="user-avatar">JM</div>
+    <div>
+      <div class="user-info-name">João Martins</div>
+      <div class="user-info-role">Aluno</div>
+    </div>
+  </div>
+</aside>
 
-<a href="certificados.html">Certificados</a>
+<!-- MAIN CONTENT -->
+<main class="main">
 
-</div>
+  <!-- Top bar -->
+  <div class="topbar">
+    <div>
+      <p class="page-label">Bem-vindo de volta</p>
+      <h1 class="page-title">Minha <em>Área</em></h1>
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn" title="Notificações">🔔</button>
+    </div>
+  </div>
 
-<div class="card">
+  <!-- Verse of the day -->
+  <div class="verse-banner fade-in">
+    <p class="verse-text">«A tua palavra é lâmpada que ilumina os meus passos<br>e luz que clareia o meu caminho.»</p>
+    <p class="verse-ref">Salmos 119:105 · Versículo do dia</p>
+  </div>
 
-<h2>Fundamentos da Fé</h2>
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card fade-in">
+      <div class="stat-num">2</div>
+      <div class="stat-label">Cursos ativos</div>
+    </div>
+    <div class="stat-card fade-in">
+      <div class="stat-num">47%</div>
+      <div class="stat-label">Progresso médio</div>
+    </div>
+    <div class="stat-card fade-in">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Certificados</div>
+    </div>
+  </div>
 
-<p>Status: Em andamento</p>
+  <!-- My courses -->
+  <div class="sec-header">
+    <h2 class="sec-title">Meus Cursos</h2>
+    <a href="cursos.html" class="sec-link">Ver todos →</a>
+  </div>
 
-<button>Continuar curso</button>
+  <div class="courses-grid">
 
-</div>
+    <!-- Card 1 -->
+    <div class="course-card fade-in">
+      <p class="course-category">Teologia Sistemática</p>
+      <h3 class="course-title">Fundamentos da Fé</h3>
+      <p class="course-desc">Uma introdução às doutrinas centrais do cristianismo histórico e reformado.</p>
+      <div class="course-meta">
+        <span class="course-status status-active">
+          <span class="status-dot"></span> Em andamento
+        </span>
+        <span style="font-size:0.8rem; color:var(--muted);">8 de 16 aulas</span>
+      </div>
+      <div class="course-progress-wrap">
+        <div class="progress-info">
+          <span>Progresso</span>
+          <span>50%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:50%"></div>
+        </div>
+      </div>
+      <button class="course-btn primary">Continuar curso</button>
+    </div>
 
-<div class="card">
+    <!-- Card 2 -->
+    <div class="course-card fade-in">
+      <p class="course-category">Vida Cristã</p>
+      <h3 class="course-title">Vida de Oração</h3>
+      <p class="course-desc">Aprofunde sua comunhão com Deus através de uma prática de oração bíblica e consistente.</p>
+      <div class="course-meta">
+        <span class="course-status status-available">
+          <span class="status-dot"></span> Disponível
+        </span>
+        <span style="font-size:0.8rem; color:var(--muted);">12 aulas</span>
+      </div>
+      <div class="course-progress-wrap">
+        <div class="progress-info">
+          <span>Progresso</span>
+          <span>0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <button class="course-btn">Iniciar curso</button>
+    </div>
 
-<h2>Vida de Oração</h2>
+    <!-- Card 3 — locked -->
+    <div class="course-card fade-in" style="opacity:0.55;">
+      <p class="course-category">Hermenêutica</p>
+      <h3 class="course-title">Como Interpretar a Bíblia</h3>
+      <p class="course-desc">Princípios e métodos para uma leitura fiel e contextualizada das Escrituras.</p>
+      <div class="course-meta">
+        <span class="course-status status-available">
+          <span class="status-dot"></span> Em breve
+        </span>
+      </div>
+      <div class="course-progress-wrap">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <button class="course-btn" disabled style="opacity:0.4; cursor:not-allowed;">Disponível em breve</button>
+    </div>
 
-<p>Status: Disponível</p>
+  </div>
 
-<button>Iniciar</button>
-
-</div>
+</main>
 
 </body>
 </html>
