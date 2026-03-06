@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificados — Academia VeritasWay</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-pale: #F5E6C0;
+    --deep: #0E0B07;
+    --dark: #1A1510;
+    --mid: #2C2318;
+    --parch: #F9F3E8;
+    --muted: #8A7A62;
+    --green: #7AB87A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--deep);
+    color: var(--parch);
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 70% 40% at 50% 0%, rgba(201,168,76,0.07) 0%, transparent 65%),
+      url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 24px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(14,11,7,0.97), rgba(14,11,7,0.7));
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+  }
+
+  .nav-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+
+  .nav-links a {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    color: var(--gold-pale);
+    text-decoration: none;
+    opacity: 0.65;
+    transition: opacity 0.3s, color 0.3s;
+  }
+
+  .nav-links a:hover, .nav-links a.active { opacity: 1; color: var(--gold); }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    position: relative;
+    z-index: 1;
+    padding: 160px 80px 72px;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .page-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    opacity: 0.8;
+  }
+
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 900;
+    color: var(--parch);
+    line-height: 0.95;
+    margin-bottom: 20px;
+  }
+
+  .page-title em { font-style: italic; color: var(--gold); }
+
+  .page-desc {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: var(--muted);
+    font-style: italic;
+    max-width: 420px;
+  }
+
+  .header-stat {
+    text-align: right;
+  }
+
+  .stat-big {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    opacity: 0.15;
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; gap: 20px;
+    padding: 0 80px 56px;
+    max-width: 1200px; margin: 0 auto;
+  }
+
+  .div-line { flex: 1; height: 1px; background: linear-gradient(to right, transparent, rgba(201,168,76,0.2)); }
+  .div-line.r { background: linear-gradient(to left, transparent, rgba(201,168,76,0.2)); }
+  .div-mark { color: var(--gold); font-size: 0.9rem; opacity: 0.5; }
+
+  /* ── CERTS SECTION ── */
+  .certs-section {
+    position: relative; z-index: 1;
+    padding: 0 80px 120px;
+    max-width: 1200px; margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  /* ── CERTIFICATE CARD ── */
+  .cert-card {
+    background: var(--deep);
+    border: 1px solid rgba(201,168,76,0.1);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 48px;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+
+  .cert-card:hover { border-color: rgba(201,168,76,0.25); }
+
+  .cert-card.completed { border-color: rgba(201,168,76,0.2); }
+
+  .cert-card.completed::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(to bottom, var(--gold), var(--gold-light));
+  }
+
+  .cert-card.locked::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: rgba(138,122,98,0.3);
+  }
+
+  .cert-body { padding: 44px 48px; }
+
+  .cert-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .cert-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border: 1px solid;
+  }
+
+  .cert-status.done { color: var(--green); border-color: rgba(122,184,122,0.3); background: rgba(122,184,122,0.05); }
+  .cert-status.progress { color: var(--gold); border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.05); }
+  .cert-status.locked-s { color: var(--muted); border-color: rgba(138,122,98,0.25); }
+
+  .cert-status-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+  .cert-category {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  .cert-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--parch);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .cert-desc {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 28px;
+    max-width: 540px;
+  }
+
+  .cert-meta {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.35em;
+    color: var(--muted);
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+
+  .meta-value {
+    font-size: 1rem;
+    color: var(--parch);
+    font-weight: 600;
+  }
+
+  /* Progress bar */
+  .cert-progress {
+    margin-bottom: 32px;
+  }
+
+  .prog-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .prog-track {
+    height: 2px;
+    background: rgba(201,168,76,0.12);
+    position: relative;
+  }
+
+  .prog-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--gold), var(--gold-light));
+    transition: width 1.2s ease;
+  }
+
+  /* Actions */
+  .cert-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  .cert-btn {
+    padding: 14px 32px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .cert-btn.primary {
+    background: var(--gold);
+    color: var(--deep);
+  }
+
+  .cert-btn.primary:hover { background: var(--gold-light); }
+
+  .cert-btn.outline {
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold-pale);
+  }
+
+  .cert-btn.outline:hover { border-color: var(--gold); color: var(--gold); }
+
+  .cert-btn.disabled {
+    background: transparent;
+    border: 1px solid rgba(138,122,98,0.2);
+    color: var(--muted);
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* Right side — certificate preview */
+  .cert-preview {
+    width: 280px;
+    background: rgba(201,168,76,0.03);
+    border-left: 1px solid rgba(201,168,76,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+    flex-shrink: 0;
+  }
+
+  .cert-preview.locked-preview {
+    opacity: 0.25;
+    filter: blur(1px);
+  }
+
+  .cert-doc {
+    width: 100%;
+    aspect-ratio: 1.414;
+    border: 1px solid rgba(201,168,76,0.3);
+    background: rgba(201,168,76,0.04);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+    position: relative;
+    gap: 8px;
+  }
+
+  .cert-doc::before, .cert-doc::after {
+    content: '';
+    position: absolute;
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .cert-doc::before { inset: 6px; }
+  .cert-doc::after { inset: 10px; }
+
+  .cert-doc-seal {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+
+  .cert-doc-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.5rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+
+  .cert-doc-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.75rem;
+    font-style: italic;
+    color: var(--parch);
+    margin-top: 4px;
+  }
+
+  .cert-doc-line {
+    width: 40px;
+    height: 1px;
+    background: rgba(201,168,76,0.4);
+    margin: 4px auto;
+  }
+
+  .cert-doc-course {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.65rem;
+    color: var(--muted);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  /* ── MODAL OVERLAY ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(14,11,7,0.92);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--dark);
+    border: 1px solid rgba(201,168,76,0.25);
+    max-width: 700px;
+    width: 100%;
+    padding: 64px;
+    position: relative;
+    text-align: center;
+    animation: fadeUp 0.4s ease;
+  }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+
+  .modal-close {
+    position: absolute;
+    top: 20px; right: 24px;
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover { color: var(--gold); }
+
+  .modal-cert {
+    border: 2px solid rgba(201,168,76,0.4);
+    padding: 56px 48px;
+    margin-bottom: 32px;
+    position: relative;
+    background: rgba(201,168,76,0.03);
+  }
+
+  .modal-cert::before, .modal-cert::after {
+    content: '';
+    position: absolute;
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+
+  .modal-cert::before { inset: 8px; }
+  .modal-cert::after { inset: 14px; }
+
+  .modal-inner { position: relative; z-index: 1; }
+
+  .modal-seal { font-size: 3rem; margin-bottom: 16px; display: block; }
+
+  .modal-inst {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.45em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0.8;
+  }
+
+  .modal-declares {
+    font-size: 0.95rem;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+
+  .modal-student {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-style: italic;
+    color: var(--gold-pale);
+    margin-bottom: 16px;
+    line-height: 1;
+  }
+
+  .modal-course-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--parch);
+    margin-bottom: 20px;
+  }
+
+  .modal-line { width: 60px; height: 1px; background: rgba(201,168,76,0.4); margin: 20px auto; }
+
+  .modal-meta {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .modal-meta span { color: var(--gold-pale); display: block; font-size: 0.75rem; font-family: 'Cormorant Garamond', serif; font-style: italic; letter-spacing: 0; margin-top: 4px; }
+
+  .modal-actions { display: flex; gap: 12px; justify-content: center; }
+
+  /* ── ANIMATIONS ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1;
+    padding: 48px 80px;
+    border-top: 1px solid rgba(201,168,76,0.08);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  }
+
+  .footer-logo { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.3em; color: var(--gold); opacity: 0.7; }
+  .footer-copy { font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.2em; color: var(--muted); opacity: 0.4; text-transform: uppercase; }
+
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    .page-header, .section-divider, .certs-section, footer { padding-left: 24px; padding-right: 24px; }
+    .cert-card { grid-template-columns: 1fr; }
+    .cert-preview { display: none; }
+    .cert-body { padding: 32px 28px; }
+    .modal { padding: 40px 24px; }
+    .modal-meta { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Academia VeritasWay</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Início</a></li>
+    <li><a href="cursos.html">Cursos</a></li>
+    <li><a href="biblioteca.html">Biblioteca</a></li>
+    <li><a href="#artigos">Artigos</a></li>
+    <li><a href="area-aluno.html">Minha Área</a></li>
+    <li><a href="login.html">Entrar</a></li>
+  </ul>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header fade-in">
+  <div>
+    <p class="page-label">Área do Aluno</p>
+    <h1 class="page-title">Certi<em>ficados</em></h1>
+    <p class="page-desc">Visualize e baixe seus certificados de conclusão. Cada um é um marco na sua jornada.</p>
+  </div>
+  <div class="header-stat">
+    <div class="stat-big">1</div>
+  </div>
+</div>
+
+<div class="section-divider">
+  <div class="div-line"></div>
+  <span class="div-mark">✦</span>
+  <div class="div-line r"></div>
+</div>
+
+<!-- CERTIFICATES -->
+<section class="certs-section">
+
+  <!-- CONCLUÍDO -->
+  <div class="cert-card completed fade-in">
+    <div class="cert-body">
+      <div class="cert-top">
+        <span class="cert-status done"><span class="cert-status-dot"></span> Concluído</span>
+        <span class="cert-category">Teologia Sistemática</span>
+      </div>
+      <h2 class="cert-title">Fundamentos da Fé Cristã</h2>
+      <p class="cert-desc">Introdução às doutrinas centrais do evangelicalismo histórico e reformado, com base nas Escrituras e nos grandes credos da Igreja.</p>
+      <div class="cert-meta">
+        <div class="meta-item">
+          <span class="meta-label">Carga horária</span>
+          <span class="meta-value">20 horas</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Conclusão</span>
+          <span class="meta-value">Março 2026</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Aulas</span>
+          <span class="meta-value">16 de 16</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Nota</span>
+          <span class="meta-value" style="color:var(--green);">Aprovado</span>
+        </div>
+      </div>
+      <div class="cert-actions">
+        <button class="cert-btn primary" onclick="openModal()">⬇ Baixar Certificado</button>
+        <button class="cert-btn outline" onclick="openModal()">Visualizar</button>
+      </div>
+    </div>
+    <div class="cert-preview">
+      <div class="cert-doc" onclick="openModal()" style="cursor:pointer;">
+        <span class="cert-doc-seal">✦</span>
+        <div class="cert-doc-title">Certificado de Conclusão</div>
+        <div class="cert-doc-line"></div>
+        <div class="cert-doc-name">João Martins</div>
+        <div class="cert-doc-line"></div>
+        <div class="cert-doc-course">Fundamentos da<br>Fé Cristã</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EM ANDAMENTO -->
+  <div class="cert-card locked fade-in">
+    <div class="cert-body">
+      <div class="cert-top">
+        <span class="cert-status progress"><span class="cert-status-dot"></span> Em andamento</span>
+        <span class="cert-category">Vida Cristã</span>
+      </div>
+      <h2 class="cert-title">Vida de Oração</h2>
+      <p class="cert-desc">Aprofundamento da comunhão com Deus através de uma prática de oração bíblica, consistente e transformadora.</p>
+      <div class="cert-meta">
+        <div class="meta-item">
+          <span class="meta-label">Carga horária</span>
+          <span class="meta-value">12 horas</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Progresso</span>
+          <span class="meta-value">0 de 12 aulas</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Status</span>
+          <span class="meta-value" style="color:var(--gold);">0%</span>
+        </div>
+      </div>
+      <div class="cert-progress">
+        <div class="prog-header">
+          <span>Progresso do curso</span>
+          <span>0%</span>
+        </div>
+        <div class="prog-track">
+          <div class="prog-fill" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="cert-actions">
+        <a class="cert-btn primary" href="cursos.html">Continuar curso</a>
+        <button class="cert-btn disabled">Disponível ao concluir</button>
+      </div>
+    </div>
+    <div class="cert-preview locked-preview">
+      <div class="cert-doc">
+        <span class="cert-doc-seal">✦</span>
+        <div class="cert-doc-title">Certificado de Conclusão</div>
+        <div class="cert-doc-line"></div>
+        <div class="cert-doc-name">João Martins</div>
+        <div class="cert-doc-line"></div>
+        <div class="cert-doc-course">Vida de Oração</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NÃO INICIADO -->
+  <div class="cert-card locked fade-in" style="opacity:0.55;">
+    <div class="cert-body">
+      <div class="cert-top">
+        <span class="cert-status locked-s"><span class="cert-status-dot"></span> Não iniciado</span>
+        <span class="cert-category">Hermenêutica</span>
+      </div>
+      <h2 class="cert-title">Como Interpretar a Bíblia</h2>
+      <p class="cert-desc">Princípios e métodos para uma leitura fiel e contextualizada das Escrituras Sagradas.</p>
+      <div class="cert-meta">
+        <div class="meta-item">
+          <span class="meta-label">Carga horária</span>
+          <span class="meta-value">18 horas</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Aulas</span>
+          <span class="meta-value">18 aulas</span>
+        </div>
+      </div>
+      <div class="cert-actions">
+        <a class="cert-btn outline" href="cursos.html">Ver curso</a>
+        <button class="cert-btn disabled">Certificado bloqueado</button>
+      </div>
+    </div>
+    <div class="cert-preview locked-preview">
+      <div class="cert-doc">
+        <span class="cert-doc-seal">✦</span>
+        <div class="cert-doc-title">Certificado de Conclusão</div>
+        <div class="cert-doc-line"></div>
+        <div class="cert-doc-name">João Martins</div>
+        <div class="cert-doc-line"></div>
+        <div class="cert-doc-course">Como Interpretar<br>a Bíblia</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">Academia VeritasWay</span>
+  <span class="footer-copy">© 2026 — Todos os direitos reservados</span>
+</footer>
+
+<!-- CERTIFICATE MODAL -->
+<div class="modal-overlay" id="certModal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-cert">
+      <div class="modal-inner">
+        <span class="modal-seal">✦</span>
+        <p class="modal-inst">Academia VeritasWay</p>
+        <p class="modal-declares">Certifica que</p>
+        <div class="modal-student">João Martins</div>
+        <p class="modal-declares">concluiu com êxito o curso</p>
+        <div class="modal-course-name">Fundamentos da Fé Cristã</div>
+        <div class="modal-line"></div>
+        <div class="modal-meta">
+          <div>Carga horária<span>20 horas</span></div>
+          <div>Conclusão<span>Março 2026</span></div>
+          <div>Aprovação<span>Aprovado</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="cert-btn primary" onclick="closeModal()">⬇ Baixar PDF</button>
+      <button class="cert-btn outline" onclick="closeModal()">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 100);
+    });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Modal
+  function openModal() {
+    document.getElementById('certModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('certModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('certModal')) closeModal();
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+
+</body>
+</html>
