@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academia VeritasWay • Turmas</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold:       #C9A84C;
+      --gold-light: #E8C97A;
+      --deep:       #0E0B07;
+      --surface:    #161209;
+      --card:       #1C1610;
+      --border:     rgba(201,168,76,0.12);
+      --border-hov: rgba(201,168,76,0.30);
+      --parch:      #F9F3E8;
+      --muted:      #8A7A62;
+      --green:      #7AB87A;
+      --red:        #C98A8A;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--deep);
+      color: var(--parch);
+      font-family: 'Cormorant Garamond', serif;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ─────────────────────────────────── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 52px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
+
+    .header-brand {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+    }
+
+    /* ── BUTTONS ─────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 26px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.56rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.22s;
+      border: none;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .btn-gold    { background: var(--gold); color: var(--deep); }
+    .btn-gold:hover { background: var(--gold-light); }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    .btn-danger {
+      background: transparent;
+      border: 1px solid rgba(201,138,138,0.30);
+      color: var(--red);
+    }
+    .btn-danger:hover { background: rgba(201,138,138,0.08); }
+
+    .btn-sm { padding: 7px 14px; font-size: 0.5rem; }
+
+    /* ── LAYOUT ──────────────────────────────────── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 52px 80px;
+    }
+
+    /* ── PAGE TITLE ──────────────────────────────── */
+    .page-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+
+    .page-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 10px;
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 900;
+      color: var(--parch);
+      line-height: 1;
+    }
+
+    .page-title em { font-style: italic; color: var(--gold); }
+
+    /* ── TABLE ───────────────────────────────────── */
+    .table-wrap {
+      background: var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .table-head {
+      display: grid;
+      grid-template-columns: 1.6fr 2.4fr 1fr 140px;
+      background: rgba(201,168,76,0.06);
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+    }
+
+    .table-head span {
+      padding: 13px 18px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.48rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 1.6fr 2.4fr 1fr 140px;
+      background: var(--deep);
+      align-items: start;
+      transition: background 0.2s;
+    }
+
+    .table-row:hover { background: rgba(201,168,76,0.04); }
+
+    .table-cell { padding: 15px 18px; }
+
+    .nome-val {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--parch);
+    }
+
+    .desc-val {
+      font-size: 0.88rem;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.7;
+    }
+
+    .date-val {
+      font-family: 'Cinzel', serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+    }
+
+    .none-val { color: var(--muted); font-style: italic; }
+
+    .cell-actions { display: flex; gap: 6px; padding-top: 2px; }
+
+    .table-footer {
+      background: var(--card);
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .count-text {
+      font-family: 'Cinzel', serif;
+      font-size: 0.48rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.6;
+    }
+
+    /* ── STATES ──────────────────────────────────── */
+    .state-box {
+      background: var(--deep);
+      padding: 64px;
+      text-align: center;
+    }
+
+    .state-glyph { font-size: 1.4rem; opacity: 0.25; margin-bottom: 12px; }
+
+    .state-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── SKELETON ────────────────────────────────── */
+    .skeleton-row {
+      display: grid;
+      grid-template-columns: 1.6fr 2.4fr 1fr 140px;
+      background: var(--deep);
+      padding: 18px;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .skel {
+      height: 13px;
+      background: linear-gradient(
+        90deg,
+        rgba(201,168,76,0.04) 25%,
+        rgba(201,168,76,0.10) 50%,
+        rgba(201,168,76,0.04) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 2px;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── TOAST ───────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: var(--card);
+      border: 1px solid var(--border-hov);
+      padding: 14px 24px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.28s ease;
+      pointer-events: none;
+      z-index: 200;
+    }
+
+    .toast.show  { opacity: 1; transform: translateY(0); }
+    .toast.error { color: var(--red); border-color: rgba(201,138,138,0.35); }
+
+    /* ── MODAL ───────────────────────────────────── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8,6,3,0.88);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border-hov);
+      width: 100%;
+      max-width: 480px;
+      padding: 44px;
+      position: relative;
+      animation: modalIn 0.28s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px; right: 22px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+
+    .modal-close:hover { color: var(--gold); }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--parch);
+      margin-bottom: 28px;
+    }
+
+    /* ── FORM ────────────────────────────────────── */
+    .field { margin-bottom: 18px; }
+
+    .field-label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.5rem;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.75;
+      margin-bottom: 8px;
+    }
+
+    .field-input,
+    .field-textarea {
+      display: block;
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(14,11,7,0.9);
+      border: 1px solid rgba(201,168,76,0.2);
+      color: var(--parch);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.25s;
+      resize: vertical;
+    }
+
+    .field-input::placeholder,
+    .field-textarea::placeholder { color: var(--muted); opacity: 0.45; }
+
+    .field-input:focus,
+    .field-textarea:focus { border-color: rgba(201,168,76,0.5); }
+
+    .field-textarea { min-height: 100px; }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 28px;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 768px) {
+      .container { padding: 28px 20px 60px; }
+      header     { padding: 0 20px; }
+      .table-head,
+      .table-row { grid-template-columns: 1fr 1fr; }
+      .table-head span:nth-child(n+3),
+      .table-row .table-cell:nth-child(n+3) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────── -->
+<header>
+  <span class="header-brand">Academia VeritasWay</span>
+  <button class="btn btn-gold" onclick="abrirNovaTurma()">+ Nova Turma</button>
+</header>
+
+<!-- ── MAIN ────────────────────────────────────── -->
+<div class="container">
+
+  <div class="page-header">
+    <div>
+      <p class="page-eyebrow">Gestão · Turmas</p>
+      <h1 class="page-title">Gerenciar <em>Turmas</em></h1>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <div class="table-head">
+      <span>Nome</span>
+      <span>Descrição</span>
+      <span>Criada em</span>
+      <span>Ações</span>
+    </div>
+    <div id="listaTurmas"></div>
+    <div class="table-footer">
+      <span class="count-text" id="countText">—</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── MODAL ────────────────────────────────────── -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal()">✕</button>
+    <h2 class="modal-title" id="tituloModal">Nova Turma</h2>
+
+    <div class="field">
+      <label class="field-label">Nome</label>
+      <input class="field-input" id="nomeTurma" placeholder="Nome da turma">
+    </div>
+
+    <div class="field">
+      <label class="field-label">Descrição</label>
+      <textarea class="field-textarea" id="descricaoTurma" placeholder="Descrição da turma"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-danger"  id="btnExcluir" style="display:none; margin-right:auto" onclick="excluirAtual()">Excluir</button>
+      <button class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-gold"    onclick="salvarTurma()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ─────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── Config ────────────────────────────────────────
+  const SUPABASE_URL = "COLE_AQUI_URL";
+  const SUPABASE_KEY = "COLE_AQUI_KEY";
+
+  // ── State — declarados com var antes de tudo ──────
+  var turmas   = [];
+  var editando = null;
+  var client   = null;
+
+  try {
+    client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  } catch(e) {
+    console.warn("Supabase não disponível:", e.message);
+  }
+
+  // ── formatarData (igual ao original) ─────────────
+  function formatarData(data) {
+    if (!data) return "—";
+    return new Date(data).toLocaleDateString("pt-BR");
+  }
+
+  // ── carregarTurmas (igual ao original) ───────────
+  async function carregarTurmas() {
+    if (!client) return;
+
+    const { data, error } = await client
+      .from("turmas")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      document.getElementById("listaTurmas").innerHTML = `
+        <div class="state-box">
+          <div class="state-glyph">✕</div>
+          <p class="state-text">Erro ao carregar turmas.</p>
+        </div>`;
+      return;
+    }
+
+    turmas = data || [];
+    render();
+  }
+
+  // ── render ────────────────────────────────────────
+  function render() {
+    const el = document.getElementById("listaTurmas");
+
+    if (!turmas.length) {
+      el.innerHTML = `
+        <div class="state-box">
+          <div class="state-glyph">✦</div>
+          <p class="state-text">Nenhuma turma cadastrada.</p>
+        </div>`;
+    } else {
+      el.innerHTML = turmas.map(t => `
+        <div class="table-row">
+          <div class="table-cell">
+            <span class="nome-val">${t.nome || "—"}</span>
+          </div>
+          <div class="table-cell">
+            <span class="${t.descricao ? 'desc-val' : 'none-val'}">${t.descricao || "—"}</span>
+          </div>
+          <div class="table-cell">
+            <span class="date-val">${formatarData(t.created_at)}</span>
+          </div>
+          <div class="table-cell">
+            <div class="cell-actions">
+              <button class="btn btn-outline btn-sm" onclick="editarTurma('${t.id}')">Editar</button>
+              <button class="btn btn-danger  btn-sm" onclick="excluirTurma('${t.id}')">Excluir</button>
+            </div>
+          </div>
+        </div>`).join("");
+    }
+
+    const n = turmas.length;
+    document.getElementById("countText").textContent =
+      n + (n === 1 ? " turma" : " turmas");
+  }
+
+  // ── abrirNovaTurma (igual ao original) ───────────
+  function abrirNovaTurma() {
+    editando = null;
+    document.getElementById("tituloModal").textContent = "Nova Turma";
+    document.getElementById("nomeTurma").value      = "";
+    document.getElementById("descricaoTurma").value = "";
+    document.getElementById("btnExcluir").style.display = "none";
+    abrirOverlay();
+  }
+
+  // ── editarTurma (igual ao original) ──────────────
+  function editarTurma(id) {
+    const turma = turmas.find(t => t.id == id);
+    if (!turma) return;
+
+    editando = id;
+    document.getElementById("tituloModal").textContent  = "Editar Turma";
+    document.getElementById("nomeTurma").value          = turma.nome      || "";
+    document.getElementById("descricaoTurma").value     = turma.descricao || "";
+    document.getElementById("btnExcluir").style.display = "inline-flex";
+    abrirOverlay();
+  }
+
+  // ── fecharModal ───────────────────────────────────
+  function fecharModal() {
+    document.getElementById("overlay").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  function abrirOverlay() {
+    document.getElementById("overlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function overlayClick(e) {
+    if (e.target === document.getElementById("overlay")) fecharModal();
+  }
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") fecharModal();
+  });
+
+  // ── salvarTurma (igual ao original, + toast) ─────
+  async function salvarTurma() {
+    const nome      = document.getElementById("nomeTurma").value.trim();
+    const descricao = document.getElementById("descricaoTurma").value.trim();
+
+    if (!nome) { toast("Preencha o nome da turma", true); return; }
+
+    if (editando) {
+      const { error } = await client
+        .from("turmas")
+        .update({ nome, descricao })
+        .eq("id", editando);
+
+      if (error) { console.error(error); toast("Erro ao atualizar turma", true); return; }
+    } else {
+      const { error } = await client
+        .from("turmas")
+        .insert([{ nome, descricao }]);
+
+      if (error) { console.error(error); toast("Erro ao criar turma", true); return; }
+    }
+
+    fecharModal();
+    toast(editando ? "Turma atualizada" : "Turma criada");
+    await carregarTurmas();
+  }
+
+  // ── excluirTurma (igual ao original, + toast) ────
+  async function excluirTurma(id) {
+    if (!confirm("Deseja excluir esta turma?")) return;
+
+    const { error } = await client
+      .from("turmas")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error(error);
+      toast("Erro ao excluir. Verifique se há alunos vinculados.", true);
+      return;
+    }
+
+    toast("Turma removida");
+    await carregarTurmas();
+  }
+
+  // Excluir pelo botão dentro do modal
+  async function excluirAtual() {
+    if (!editando) return;
+    fecharModal();
+    await excluirTurma(editando);
+  }
+
+  // ── criarTurmasIniciais (igual ao original) ──────
+  async function criarTurmasIniciais() {
+    const nomesExistentes = turmas.map(t => (t.nome || "").toLowerCase());
+    const novasTurmas = [];
+
+    if (!nomesExistentes.includes("forja")) {
+      novasTurmas.push({
+        nome: "Forja",
+        descricao: "Turma de formação cristã e discipulado de jovens."
+      });
+    }
+
+    if (!nomesExistentes.includes("juniores da fé")) {
+      novasTurmas.push({
+        nome: "Juniores da Fé",
+        descricao: "Turma voltada à formação bíblica de crianças e pré-adolescentes."
+      });
+    }
+
+    if (novasTurmas.length) {
+      const { error } = await client.from("turmas").insert(novasTurmas);
+      if (error) { console.error(error); toast("Erro ao criar turmas iniciais.", true); return; }
+      await carregarTurmas();
+    }
+  }
+
+  // ── Toast ─────────────────────────────────────────
+  var toastTimer;
+  function toast(msg, isError) {
+    var el = document.getElementById("toast");
+    el.textContent = msg;
+    el.className   = "toast show" + (isError ? " error" : "");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { el.className = "toast"; }, 3000);
+  }
+
+  // ── Skeleton ──────────────────────────────────────
+  function renderSkeleton() {
+    document.getElementById("listaTurmas").innerHTML = Array.from({ length: 4 }).map(() => `
+      <div class="skeleton-row">
+        <div class="skel" style="width:55%"></div>
+        <div class="skel" style="width:75%"></div>
+        <div class="skel" style="width:40%"></div>
+        <div class="skel" style="width:90px"></div>
+      </div>`).join("");
+    document.getElementById("countText").textContent = "carregando…";
+  }
+
+  // ── init (igual ao original) ──────────────────────
+  async function init() {
+    renderSkeleton();
+    await carregarTurmas();
+    await criarTurmasIniciais();
+    await carregarTurmas();
+  }
+
+  init();
+</script>
+</body>
+</html>
