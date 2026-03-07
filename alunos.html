@@ -522,15 +522,26 @@
   // ── Config ────────────────────────────────────────
   const SUPABASE_URL = "COLE_AQUI_URL";
   const SUPABASE_KEY = "COLE_AQUI_KEY";
-  const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // ── State (igual ao original) ─────────────────────
-  let alunos   = [];
-  let turmas   = [];
-  let editando = null;
+  // ── State ─────────────────────────────────────────
+  // Declarados ANTES do client para que os botões do HTML
+  // nunca encontrem variáveis não inicializadas
+  var alunos   = [];
+  var turmas   = [];
+  var editando = null;
+  var client   = null;
+
+  // Client criado separadamente para não bloquear o script
+  // caso o CDN demore ou falhe
+  try {
+    client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  } catch(e) {
+    console.warn("Supabase não disponível:", e.message);
+  }
 
   // ── carregarTurmas (igual ao original) ───────────
   async function carregarTurmas() {
+    if (!client) return;
     let { data } = await client.from("turmas").select("*");
     turmas = data || [];
 
@@ -548,6 +559,7 @@
 
   // ── carregarAlunos (igual ao original) ───────────
   async function carregarAlunos() {
+    if (!client) return;
     let { data } = await client
       .from("alunos")
       .select("*")
