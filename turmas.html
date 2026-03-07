@@ -11,16 +11,16 @@
       --gold:        #C9A84C;
       --gold-light:  #E8C97A;
       --gold-dim:    rgba(201,168,76,0.15);
-      --gold-glow:   rgba(201,168,76,0.06);
-      --deep:        #080604;
-      --surface:     #0F0C08;
-      --card:        #141009;
-      --border:      rgba(201,168,76,0.10);
-      --border-mid:  rgba(201,168,76,0.22);
-      --border-hov:  rgba(201,168,76,0.40);
-      --parch:       #F5EDD8;
-      --parch-dim:   #B8A88A;
-      --muted:       #5E5040;
+      --gold-glow:   rgba(201,168,76,0.12);
+      --deep:        #F8F4EE;
+      --surface:     #FFFFFF;
+      --card:        #F2EDE5;
+      --border:      rgba(160,130,60,0.18);
+      --border-mid:  rgba(160,130,60,0.32);
+      --border-hov:  rgba(160,130,60,0.55);
+      --parch:       #1A1208;
+      --parch-dim:   #3D2E1A;
+      --muted:       #7A6A52;
       --red:         #B07070;
       --red-b:       rgba(176,112,112,0.25);
     }
@@ -32,6 +32,7 @@
       background: var(--deep);
       color: var(--parch);
       font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
       min-height: 100vh;
       /* subtle grain texture */
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
@@ -82,8 +83,8 @@
       justify-content: center;
       gap: 9px;
       font-family: 'Cinzel', serif;
-      font-size: 0.54rem;
-      letter-spacing: 0.28em;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.25s ease;
@@ -134,7 +135,7 @@
       border-color: rgba(176,112,112,0.4);
     }
 
-    .btn-sm { padding: 8px 16px; font-size: 0.49rem; }
+    .btn-sm { padding: 9px 18px; font-size: 0.6rem; }
 
     .btn:disabled {
       opacity: 0.45;
@@ -257,15 +258,15 @@
     .table-head {
       display: grid;
       grid-template-columns: 1.5fr 2.8fr 0.9fr 150px;
-      background: rgba(201,168,76,0.05);
+      background: rgba(201,168,76,0.08);
       border-bottom: 1px solid var(--border-mid);
     }
 
     .table-head span {
       padding: 14px 20px;
       font-family: 'Cinzel', serif;
-      font-size: 0.46rem;
-      letter-spacing: 0.38em;
+      font-size: 0.6rem;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--muted);
     }
@@ -290,7 +291,7 @@
       transition: transform 0.25s ease;
     }
 
-    .table-row:hover { background: rgba(201,168,76,0.03); }
+    .table-row:hover { background: rgba(201,168,76,0.08); }
     .table-row:hover::before { transform: scaleY(1); }
 
     .table-cell { padding: 16px 20px; }
@@ -317,14 +318,14 @@
     }
 
     .nome-val {
-      font-size: 1rem;
+      font-size: 1.15rem;
       font-weight: 600;
       color: var(--parch);
       letter-spacing: 0.01em;
     }
 
     .desc-val {
-      font-size: 0.9rem;
+      font-size: 1.08rem;
       color: var(--parch-dim);
       font-style: italic;
       line-height: 1.7;
@@ -332,7 +333,7 @@
 
     .date-val {
       font-family: 'Cinzel', serif;
-      font-size: 0.50rem;
+      font-size: 0.62rem;
       letter-spacing: 0.18em;
       color: var(--muted);
     }
@@ -360,7 +361,7 @@
 
     .count-text {
       font-family: 'Cinzel', serif;
-      font-size: 0.46rem;
+      font-size: 0.6rem;
       letter-spacing: 0.32em;
       text-transform: uppercase;
       color: var(--muted);
@@ -448,7 +449,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(4,3,2,0.90);
+      background: rgba(20,14,6,0.75);
       z-index: 100;
       align-items: center;
       justify-content: center;
@@ -539,8 +540,8 @@
     .field-label {
       display: block;
       font-family: 'Cinzel', serif;
-      font-size: 0.48rem;
-      letter-spacing: 0.42em;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
       text-transform: uppercase;
       color: var(--gold);
       opacity: 0.65;
@@ -552,7 +553,7 @@
       display: block;
       width: 100%;
       padding: 14px 18px;
-      background: rgba(8,6,4,0.8);
+      background: rgba(248,244,238,0.97);
       border: 1px solid var(--border-mid);
       color: var(--parch);
       font-family: 'Cormorant Garamond', serif;
