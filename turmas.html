@@ -5,188 +5,353 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Academia VeritasWay • Turmas</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --gold:       #C9A84C;
-      --gold-light: #E8C97A;
-      --deep:       #0E0B07;
-      --surface:    #161209;
-      --card:       #1C1610;
-      --border:     rgba(201,168,76,0.12);
-      --border-hov: rgba(201,168,76,0.30);
-      --parch:      #F9F3E8;
-      --muted:      #8A7A62;
-      --green:      #7AB87A;
-      --red:        #C98A8A;
+      --gold:        #C9A84C;
+      --gold-light:  #E8C97A;
+      --gold-dim:    rgba(201,168,76,0.15);
+      --gold-glow:   rgba(201,168,76,0.06);
+      --deep:        #080604;
+      --surface:     #0F0C08;
+      --card:        #141009;
+      --border:      rgba(201,168,76,0.10);
+      --border-mid:  rgba(201,168,76,0.22);
+      --border-hov:  rgba(201,168,76,0.40);
+      --parch:       #F5EDD8;
+      --parch-dim:   #B8A88A;
+      --muted:       #5E5040;
+      --red:         #B07070;
+      --red-b:       rgba(176,112,112,0.25);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
       background: var(--deep);
       color: var(--parch);
       font-family: 'Cormorant Garamond', serif;
       min-height: 100vh;
+      /* subtle grain texture */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
     }
 
-    /* ── HEADER ─────────────────────────────────── */
+    /* ── HEADER ─────────────────────────────────────── */
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 0 52px;
-      height: 64px;
+      padding: 0 64px;
+      height: 70px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 40;
+      /* glass shimmer */
+      box-shadow: 0 1px 40px rgba(0,0,0,0.6);
     }
 
     .header-brand {
-      font-family: 'Cinzel', serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.25em;
-      color: var(--gold);
-    }
-
-    /* ── BUTTONS ─────────────────────────────────── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 11px 26px;
-      font-family: 'Cinzel', serif;
-      font-size: 0.56rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.22s;
-      border: none;
-      line-height: 1;
-      white-space: nowrap;
-    }
-
-    .btn-gold    { background: var(--gold); color: var(--deep); }
-    .btn-gold:hover { background: var(--gold-light); }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--muted);
-    }
-    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
-
-    .btn-danger {
-      background: transparent;
-      border: 1px solid rgba(201,138,138,0.30);
-      color: var(--red);
-    }
-    .btn-danger:hover { background: rgba(201,138,138,0.08); }
-
-    .btn-sm { padding: 7px 14px; font-size: 0.5rem; }
-
-    /* ── LAYOUT ──────────────────────────────────── */
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 48px 52px 80px;
-    }
-
-    /* ── PAGE TITLE ──────────────────────────────── */
-    .page-header {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 24px;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
-    }
-
-    .page-eyebrow {
-      font-family: 'Cinzel', serif;
-      font-size: 0.52rem;
-      letter-spacing: 0.5em;
-      color: var(--gold);
-      text-transform: uppercase;
-      opacity: 0.8;
-      margin-bottom: 10px;
-    }
-
-    .page-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 4vw, 2.8rem);
-      font-weight: 900;
-      color: var(--parch);
-      line-height: 1;
-    }
-
-    .page-title em { font-style: italic; color: var(--gold); }
-
-    /* ── TABLE ───────────────────────────────────── */
-    .table-wrap {
-      background: var(--border);
       display: flex;
       flex-direction: column;
       gap: 2px;
     }
 
+    .brand-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.72rem;
+      font-style: italic;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── BUTTONS ────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.54rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none;
+      line-height: 1;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #C9A84C, #B8923A);
+      color: #0F0C08;
+      padding: 13px 32px;
+      font-weight: 600;
+      box-shadow: 0 2px 20px rgba(201,168,76,0.20);
+    }
+
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #E8C97A, #C9A84C);
+      box-shadow: 0 4px 28px rgba(201,168,76,0.35);
+      transform: translateY(-1px);
+    }
+
+    .btn-gold:active { transform: translateY(0); }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      color: var(--parch-dim);
+      padding: 11px 24px;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-glow);
+    }
+
+    .btn-danger {
+      background: transparent;
+      border: 1px solid var(--red-b);
+      color: var(--red);
+      padding: 11px 24px;
+    }
+
+    .btn-danger:hover {
+      background: rgba(176,112,112,0.07);
+      border-color: rgba(176,112,112,0.4);
+    }
+
+    .btn-sm { padding: 8px 16px; font-size: 0.49rem; }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* ── LAYOUT ─────────────────────────────────────── */
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 56px 64px 100px;
+    }
+
+    /* ── PAGE HERO ──────────────────────────────────── */
+    .page-hero {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 32px;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+      padding-bottom: 36px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+
+    /* decorative corner line */
+    .page-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 80px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .hero-text {}
+
+    .page-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.50rem;
+      letter-spacing: 0.55em;
+      color: var(--gold);
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.5;
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+      font-weight: 900;
+      color: var(--parch);
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+    }
+
+    .page-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    /* ── STAT PILLS ─────────────────────────────────── */
+    .stat-pills {
+      display: flex;
+      gap: 2px;
+      background: var(--border);
+      align-self: flex-end;
+    }
+
+    .stat-pill {
+      background: var(--card);
+      padding: 18px 28px;
+      text-align: center;
+      min-width: 110px;
+    }
+
+    .pill-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .pill-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.44rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+    }
+
+    /* ── TABLE ──────────────────────────────────────── */
+    .table-wrap {
+      background: var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      box-shadow: 0 8px 60px rgba(0,0,0,0.5);
+    }
+
     .table-head {
       display: grid;
-      grid-template-columns: 1.6fr 2.4fr 1fr 140px;
-      background: rgba(201,168,76,0.06);
-      border-bottom: 1px solid rgba(201,168,76,0.15);
+      grid-template-columns: 1.5fr 2.8fr 0.9fr 150px;
+      background: rgba(201,168,76,0.05);
+      border-bottom: 1px solid var(--border-mid);
     }
 
     .table-head span {
-      padding: 13px 18px;
+      padding: 14px 20px;
       font-family: 'Cinzel', serif;
-      font-size: 0.48rem;
-      letter-spacing: 0.3em;
+      font-size: 0.46rem;
+      letter-spacing: 0.38em;
       text-transform: uppercase;
       color: var(--muted);
     }
 
     .table-row {
       display: grid;
-      grid-template-columns: 1.6fr 2.4fr 1fr 140px;
+      grid-template-columns: 1.5fr 2.8fr 0.9fr 150px;
       background: var(--deep);
-      align-items: start;
-      transition: background 0.2s;
+      align-items: center;
+      transition: background 0.22s;
+      position: relative;
     }
 
-    .table-row:hover { background: rgba(201,168,76,0.04); }
+    .table-row::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--gold);
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform 0.25s ease;
+    }
 
-    .table-cell { padding: 15px 18px; }
+    .table-row:hover { background: rgba(201,168,76,0.03); }
+    .table-row:hover::before { transform: scaleY(1); }
+
+    .table-cell { padding: 16px 20px; }
+
+    /* Nome cell */
+    .nome-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .turma-badge {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      color: var(--gold);
+      flex-shrink: 0;
+      background: var(--gold-glow);
+    }
 
     .nome-val {
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 600;
       color: var(--parch);
+      letter-spacing: 0.01em;
     }
 
     .desc-val {
-      font-size: 0.88rem;
-      color: var(--muted);
+      font-size: 0.9rem;
+      color: var(--parch-dim);
       font-style: italic;
       line-height: 1.7;
     }
 
     .date-val {
       font-family: 'Cinzel', serif;
-      font-size: 0.52rem;
-      letter-spacing: 0.15em;
+      font-size: 0.50rem;
+      letter-spacing: 0.18em;
       color: var(--muted);
     }
 
-    .none-val { color: var(--muted); font-style: italic; }
+    .none-val {
+      color: var(--muted);
+      font-style: italic;
+      opacity: 0.5;
+    }
 
-    .cell-actions { display: flex; gap: 6px; padding-top: 2px; }
+    .cell-actions {
+      display: flex;
+      gap: 6px;
+    }
 
+    /* ── TABLE FOOTER ───────────────────────────────── */
     .table-footer {
       background: var(--card);
-      padding: 12px 18px;
+      padding: 13px 20px;
       border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
@@ -195,50 +360,55 @@
 
     .count-text {
       font-family: 'Cinzel', serif;
-      font-size: 0.48rem;
-      letter-spacing: 0.3em;
+      font-size: 0.46rem;
+      letter-spacing: 0.32em;
       text-transform: uppercase;
       color: var(--muted);
-      opacity: 0.6;
     }
 
-    /* ── STATES ──────────────────────────────────── */
+    /* ── EMPTY / ERROR STATES ───────────────────────── */
     .state-box {
       background: var(--deep);
-      padding: 64px;
+      padding: 72px 40px;
       text-align: center;
     }
 
-    .state-glyph { font-size: 1.4rem; opacity: 0.25; margin-bottom: 12px; }
+    .state-ornament {
+      font-size: 0.7rem;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      opacity: 0.2;
+      margin-bottom: 18px;
+    }
 
     .state-text {
       font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       color: var(--muted);
       font-style: italic;
     }
 
-    /* ── SKELETON ────────────────────────────────── */
+    /* ── SKELETON ───────────────────────────────────── */
     .skeleton-row {
       display: grid;
-      grid-template-columns: 1.6fr 2.4fr 1fr 140px;
+      grid-template-columns: 1.5fr 2.8fr 0.9fr 150px;
       background: var(--deep);
-      padding: 18px;
-      gap: 18px;
+      padding: 18px 20px;
+      gap: 20px;
       align-items: center;
     }
 
     .skel {
-      height: 13px;
+      height: 12px;
       background: linear-gradient(
         90deg,
-        rgba(201,168,76,0.04) 25%,
-        rgba(201,168,76,0.10) 50%,
-        rgba(201,168,76,0.04) 75%
+        rgba(201,168,76,0.03) 25%,
+        rgba(201,168,76,0.09) 50%,
+        rgba(201,168,76,0.03) 75%
       );
       background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-      border-radius: 2px;
+      animation: shimmer 1.6s infinite;
+      border-radius: 1px;
     }
 
     @keyframes shimmer {
@@ -246,150 +416,220 @@
       100% { background-position: -200% 0; }
     }
 
-    /* ── TOAST ───────────────────────────────────── */
+    /* ── TOAST ──────────────────────────────────────── */
     .toast {
       position: fixed;
-      bottom: 32px;
-      right: 32px;
+      bottom: 36px;
+      right: 36px;
       background: var(--card);
-      border: 1px solid var(--border-hov);
-      padding: 14px 24px;
+      border-left: 3px solid var(--gold);
+      border-top: 1px solid var(--border-mid);
+      border-right: 1px solid var(--border-mid);
+      border-bottom: 1px solid var(--border-mid);
+      padding: 16px 28px;
       font-family: 'Cinzel', serif;
-      font-size: 0.55rem;
+      font-size: 0.53rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--gold);
       opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.28s ease;
+      transform: translateY(12px);
+      transition: all 0.3s ease;
       pointer-events: none;
-      z-index: 200;
+      z-index: 300;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
     }
 
     .toast.show  { opacity: 1; transform: translateY(0); }
-    .toast.error { color: var(--red); border-color: rgba(201,138,138,0.35); }
+    .toast.error { color: var(--red); border-left-color: var(--red); }
 
-    /* ── MODAL ───────────────────────────────────── */
+    /* ── OVERLAY / MODAL ────────────────────────────── */
     .overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(8,6,3,0.88);
+      background: rgba(4,3,2,0.90);
       z-index: 100;
       align-items: center;
       justify-content: center;
       padding: 32px;
+      backdrop-filter: blur(2px);
     }
 
     .overlay.open { display: flex; }
 
     .modal {
       background: var(--surface);
-      border: 1px solid var(--border-hov);
+      border: 1px solid var(--border-mid);
       width: 100%;
-      max-width: 480px;
-      padding: 44px;
+      max-width: 500px;
+      padding: 52px;
       position: relative;
-      animation: modalIn 0.28s ease;
+      animation: modalIn 0.32s cubic-bezier(0.16,1,0.3,1);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.7),
+                  inset 0 1px 0 rgba(201,168,76,0.06);
+    }
+
+    /* corner ornament */
+    .modal::before,
+    .modal::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.25;
+    }
+
+    .modal::before {
+      top: 16px; left: 16px;
+      border-width: 1px 0 0 1px;
+    }
+
+    .modal::after {
+      bottom: 16px; right: 16px;
+      border-width: 0 1px 1px 0;
     }
 
     @keyframes modalIn {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(22px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);    }
     }
 
     .modal-close {
       position: absolute;
-      top: 18px; right: 22px;
+      top: 20px; right: 24px;
       background: none;
       border: none;
       color: var(--muted);
-      font-size: 1rem;
+      font-size: 0.9rem;
       cursor: pointer;
       transition: color 0.2s;
       line-height: 1;
+      font-family: 'Cinzel', serif;
     }
 
     .modal-close:hover { color: var(--gold); }
 
-    .modal-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: var(--parch);
-      margin-bottom: 28px;
+    .modal-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.48rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.55;
+      margin-bottom: 10px;
     }
 
-    /* ── FORM ────────────────────────────────────── */
-    .field { margin-bottom: 18px; }
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--parch);
+      margin-bottom: 36px;
+      line-height: 1;
+    }
+
+    .modal-title em { font-style: italic; color: var(--gold); }
+
+    /* ── FORM ───────────────────────────────────────── */
+    .field { margin-bottom: 20px; }
 
     .field-label {
       display: block;
       font-family: 'Cinzel', serif;
-      font-size: 0.5rem;
-      letter-spacing: 0.38em;
+      font-size: 0.48rem;
+      letter-spacing: 0.42em;
       text-transform: uppercase;
       color: var(--gold);
-      opacity: 0.75;
-      margin-bottom: 8px;
+      opacity: 0.65;
+      margin-bottom: 10px;
     }
 
     .field-input,
     .field-textarea {
       display: block;
       width: 100%;
-      padding: 13px 16px;
-      background: rgba(14,11,7,0.9);
-      border: 1px solid rgba(201,168,76,0.2);
+      padding: 14px 18px;
+      background: rgba(8,6,4,0.8);
+      border: 1px solid var(--border-mid);
       color: var(--parch);
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
+      font-size: 1.05rem;
       outline: none;
-      transition: border-color 0.25s;
+      transition: border-color 0.25s, box-shadow 0.25s;
       resize: vertical;
     }
 
     .field-input::placeholder,
-    .field-textarea::placeholder { color: var(--muted); opacity: 0.45; }
+    .field-textarea::placeholder { color: var(--muted); opacity: 0.4; }
 
     .field-input:focus,
-    .field-textarea:focus { border-color: rgba(201,168,76,0.5); }
+    .field-textarea:focus {
+      border-color: rgba(201,168,76,0.45);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.05);
+    }
 
-    .field-textarea { min-height: 100px; }
+    .field-textarea { min-height: 110px; }
+
+    .modal-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 28px 0;
+    }
 
     .modal-actions {
       display: flex;
       gap: 10px;
       justify-content: flex-end;
-      margin-top: 28px;
+      align-items: center;
     }
 
-    /* ── RESPONSIVE ──────────────────────────────── */
-    @media (max-width: 768px) {
-      .container { padding: 28px 20px 60px; }
-      header     { padding: 0 20px; }
+    .modal-actions .spacer { flex: 1; }
+
+    /* ── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 860px) {
+      .container { padding: 36px 24px 80px; }
+      header     { padding: 0 24px; }
+      .stat-pills { display: none; }
       .table-head,
-      .table-row { grid-template-columns: 1fr 1fr; }
+      .table-row  { grid-template-columns: 1fr 1fr; }
       .table-head span:nth-child(n+3),
       .table-row .table-cell:nth-child(n+3) { display: none; }
+      .modal { padding: 36px 28px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── HEADER ──────────────────────────────────── -->
+<!-- ── HEADER ────────────────────────────────────── -->
 <header>
-  <span class="header-brand">Academia VeritasWay</span>
+  <div class="header-brand">
+    <span class="brand-name">Academia VeritasWay</span>
+    <span class="brand-sub">Gestão de Turmas</span>
+  </div>
   <button class="btn btn-gold" onclick="abrirNovaTurma()">+ Nova Turma</button>
 </header>
 
-<!-- ── MAIN ────────────────────────────────────── -->
+<!-- ── MAIN ──────────────────────────────────────── -->
 <div class="container">
 
-  <div class="page-header">
-    <div>
+  <!-- Hero -->
+  <div class="page-hero">
+    <div class="hero-text">
       <p class="page-eyebrow">Gestão · Turmas</p>
       <h1 class="page-title">Gerenciar <em>Turmas</em></h1>
+    </div>
+    <div class="stat-pills">
+      <div class="stat-pill">
+        <span class="pill-num" id="statTotal">—</span>
+        <span class="pill-label">Total</span>
+      </div>
+      <div class="stat-pill">
+        <span class="pill-num" id="statMes">—</span>
+        <span class="pill-label">Este mês</span>
+      </div>
     </div>
   </div>
 
@@ -409,135 +649,165 @@
 
 </div>
 
-<!-- ── MODAL ────────────────────────────────────── -->
+<!-- ── MODAL ──────────────────────────────────────── -->
 <div class="overlay" id="overlay" onclick="overlayClick(event)">
   <div class="modal">
     <button class="modal-close" onclick="fecharModal()">✕</button>
-    <h2 class="modal-title" id="tituloModal">Nova Turma</h2>
+    <p class="modal-eyebrow" id="modalEyebrow">Nova turma</p>
+    <h2 class="modal-title" id="tituloModal">Criar <em>Turma</em></h2>
 
     <div class="field">
-      <label class="field-label">Nome</label>
-      <input class="field-input" id="nomeTurma" placeholder="Nome da turma">
+      <label class="field-label">Nome da turma</label>
+      <input class="field-input" id="nomeTurma" placeholder="Ex: Jovens 2026">
     </div>
 
     <div class="field">
       <label class="field-label">Descrição</label>
-      <textarea class="field-textarea" id="descricaoTurma" placeholder="Descrição da turma"></textarea>
+      <textarea class="field-textarea" id="descricaoTurma" placeholder="Descrição opcional da turma"></textarea>
     </div>
 
+    <div class="modal-divider"></div>
+
     <div class="modal-actions">
-      <button class="btn btn-danger"  id="btnExcluir" style="display:none; margin-right:auto" onclick="excluirAtual()">Excluir</button>
+      <button class="btn btn-danger"  id="btnExcluir" style="display:none" onclick="excluirAtual()">Excluir</button>
+      <span class="spacer"></span>
       <button class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
-      <button class="btn btn-gold"    onclick="salvarTurma()">Salvar</button>
+      <button class="btn btn-gold"    id="btnSalvar"  onclick="salvarTurma()">Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- ── TOAST ─────────────────────────────────────── -->
+<!-- ── TOAST ──────────────────────────────────────── -->
 <div class="toast" id="toast"></div>
 
 <script>
-  // ── Config ────────────────────────────────────────
-  const SUPABASE_URL = "COLE_AQUI_URL";
-  const SUPABASE_KEY = "COLE_AQUI_KEY";
+  // ════════════════════════════════════════
+  // CONFIG — substitua pelos seus valores
+  // ════════════════════════════════════════
+  var SUPABASE_URL = "COLE_AQUI_URL";
+  var SUPABASE_KEY = "COLE_AQUI_KEY";
 
-  // ── State — declarados com var antes de tudo ──────
+  // ── State — tudo com var, declarado antes de tudo ──
   var turmas   = [];
   var editando = null;
+  var salvando = false;
   var client   = null;
 
+  // Client criado em try/catch para não travar o script
+  // se o CDN não carregar (ex: preview do Claude)
   try {
     client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   } catch(e) {
     console.warn("Supabase não disponível:", e.message);
   }
 
-  // ── formatarData (igual ao original) ─────────────
-  function formatarData(data) {
-    if (!data) return "—";
-    return new Date(data).toLocaleDateString("pt-BR");
+  // ── Helpers ──────────────────────────────────────
+  function formatarData(d) {
+    if (!d) return "—";
+    return new Date(d).toLocaleDateString("pt-BR");
   }
 
-  // ── carregarTurmas (igual ao original) ───────────
+  function inicial(nome) {
+    return (nome || "?")[0].toUpperCase();
+  }
+
+  function destesMes(d) {
+    if (!d) return false;
+    var dt = new Date(d), n = new Date();
+    return dt.getMonth() === n.getMonth() && dt.getFullYear() === n.getFullYear();
+  }
+
+  // ── carregarTurmas ────────────────────────────────
   async function carregarTurmas() {
     if (!client) return;
 
-    const { data, error } = await client
+    var r = await client
       .from("turmas")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error(error);
-      document.getElementById("listaTurmas").innerHTML = `
-        <div class="state-box">
-          <div class="state-glyph">✕</div>
-          <p class="state-text">Erro ao carregar turmas.</p>
-        </div>`;
+    if (r.error) {
+      console.error(r.error);
+      document.getElementById("listaTurmas").innerHTML =
+        '<div class="state-box">'
+        + '<div class="state-ornament">✦ ✦ ✦</div>'
+        + '<p class="state-text">Erro ao carregar turmas.</p>'
+        + '</div>';
       return;
     }
 
-    turmas = data || [];
+    turmas = r.data || [];
+
+    // stats
+    document.getElementById("statTotal").textContent = turmas.length;
+    document.getElementById("statMes").textContent   = turmas.filter(function(t){ return destesMes(t.created_at); }).length;
+
     render();
   }
 
   // ── render ────────────────────────────────────────
   function render() {
-    const el = document.getElementById("listaTurmas");
+    var el = document.getElementById("listaTurmas");
 
     if (!turmas.length) {
-      el.innerHTML = `
-        <div class="state-box">
-          <div class="state-glyph">✦</div>
-          <p class="state-text">Nenhuma turma cadastrada.</p>
-        </div>`;
+      el.innerHTML =
+        '<div class="state-box">'
+        + '<div class="state-ornament">✦ ✦ ✦</div>'
+        + '<p class="state-text">Nenhuma turma cadastrada.</p>'
+        + '</div>';
     } else {
-      el.innerHTML = turmas.map(t => `
-        <div class="table-row">
-          <div class="table-cell">
-            <span class="nome-val">${t.nome || "—"}</span>
-          </div>
-          <div class="table-cell">
-            <span class="${t.descricao ? 'desc-val' : 'none-val'}">${t.descricao || "—"}</span>
-          </div>
-          <div class="table-cell">
-            <span class="date-val">${formatarData(t.created_at)}</span>
-          </div>
-          <div class="table-cell">
-            <div class="cell-actions">
-              <button class="btn btn-outline btn-sm" onclick="editarTurma('${t.id}')">Editar</button>
-              <button class="btn btn-danger  btn-sm" onclick="excluirTurma('${t.id}')">Excluir</button>
-            </div>
-          </div>
-        </div>`).join("");
+      el.innerHTML = turmas.map(function(t) {
+        return '<div class="table-row">'
+          + '<div class="table-cell"><div class="nome-wrap">'
+          + '<div class="turma-badge">' + inicial(t.nome) + '</div>'
+          + '<span class="nome-val">' + (t.nome || "—") + '</span>'
+          + '</div></div>'
+          + '<div class="table-cell"><span class="' + (t.descricao ? 'desc-val' : 'none-val') + '">' + (t.descricao || "—") + '</span></div>'
+          + '<div class="table-cell"><span class="date-val">' + formatarData(t.created_at) + '</span></div>'
+          + '<div class="table-cell"><div class="cell-actions">'
+          + '<button class="btn btn-outline btn-sm" onclick="editarTurma(\'' + t.id + '\')">Editar</button>'
+          + '<button class="btn btn-danger  btn-sm" onclick="excluirTurma(\'' + t.id + '\')">Excluir</button>'
+          + '</div></div>'
+          + '</div>';
+      }).join("");
     }
 
-    const n = turmas.length;
-    document.getElementById("countText").textContent =
-      n + (n === 1 ? " turma" : " turmas");
+    var n = turmas.length;
+    document.getElementById("countText").textContent = n + (n === 1 ? " turma" : " turmas");
   }
 
-  // ── abrirNovaTurma (igual ao original) ───────────
+  // ── abrirNovaTurma ────────────────────────────────
   function abrirNovaTurma() {
     editando = null;
-    document.getElementById("tituloModal").textContent = "Nova Turma";
-    document.getElementById("nomeTurma").value      = "";
-    document.getElementById("descricaoTurma").value = "";
-    document.getElementById("btnExcluir").style.display = "none";
-    abrirOverlay();
+    document.getElementById("modalEyebrow").textContent  = "Nova turma";
+    document.getElementById("tituloModal").innerHTML     = "Criar <em>Turma</em>";
+    document.getElementById("nomeTurma").value           = "";
+    document.getElementById("descricaoTurma").value      = "";
+    document.getElementById("btnExcluir").style.display  = "none";
+    document.getElementById("btnSalvar").textContent     = "Salvar";
+    document.getElementById("btnSalvar").disabled        = false;
+    document.getElementById("overlay").classList.add("open");
+    document.body.style.overflow = "hidden";
   }
 
-  // ── editarTurma (igual ao original) ──────────────
+  // ── editarTurma ───────────────────────────────────
   function editarTurma(id) {
-    const turma = turmas.find(t => t.id == id);
+    var turma = null;
+    for (var i = 0; i < turmas.length; i++) {
+      if (turmas[i].id == id) { turma = turmas[i]; break; }
+    }
     if (!turma) return;
 
     editando = id;
-    document.getElementById("tituloModal").textContent  = "Editar Turma";
-    document.getElementById("nomeTurma").value          = turma.nome      || "";
-    document.getElementById("descricaoTurma").value     = turma.descricao || "";
-    document.getElementById("btnExcluir").style.display = "inline-flex";
-    abrirOverlay();
+    document.getElementById("modalEyebrow").textContent  = "Editar turma";
+    document.getElementById("tituloModal").innerHTML     = "Editar <em>Turma</em>";
+    document.getElementById("nomeTurma").value           = turma.nome      || "";
+    document.getElementById("descricaoTurma").value      = turma.descricao || "";
+    document.getElementById("btnExcluir").style.display  = "inline-flex";
+    document.getElementById("btnSalvar").textContent     = "Salvar";
+    document.getElementById("btnSalvar").disabled        = false;
+    document.getElementById("overlay").classList.add("open");
+    document.body.style.overflow = "hidden";
   }
 
   // ── fecharModal ───────────────────────────────────
@@ -546,58 +816,75 @@
     document.body.style.overflow = "";
   }
 
-  function abrirOverlay() {
-    document.getElementById("overlay").classList.add("open");
-    document.body.style.overflow = "hidden";
-  }
-
   function overlayClick(e) {
     if (e.target === document.getElementById("overlay")) fecharModal();
   }
 
-  document.addEventListener("keydown", e => {
+  document.addEventListener("keydown", function(e) {
     if (e.key === "Escape") fecharModal();
   });
 
-  // ── salvarTurma (igual ao original, + toast) ─────
+  // ── salvarTurma ───────────────────────────────────
+  // IMPORTANTE: idEditando capturado ANTES de qualquer await
+  // para não perder o valor caso o modal feche antes
   async function salvarTurma() {
-    const nome      = document.getElementById("nomeTurma").value.trim();
-    const descricao = document.getElementById("descricaoTurma").value.trim();
+    if (salvando) return;
+    if (!client) { toast("Sem conexão com Supabase", true); return; }
+
+    var nome      = document.getElementById("nomeTurma").value.trim();
+    var descricao = document.getElementById("descricaoTurma").value.trim();
+    var idAtual   = editando; // captura ANTES de qualquer operação async
 
     if (!nome) { toast("Preencha o nome da turma", true); return; }
 
-    if (editando) {
-      const { error } = await client
-        .from("turmas")
-        .update({ nome, descricao })
-        .eq("id", editando);
+    // loading state
+    salvando = true;
+    document.getElementById("btnSalvar").textContent = "Salvando…";
+    document.getElementById("btnSalvar").disabled    = true;
 
-      if (error) { console.error(error); toast("Erro ao atualizar turma", true); return; }
+    var erro;
+
+    if (idAtual) {
+      // UPDATE
+      var r = await client
+        .from("turmas")
+        .update({ nome: nome, descricao: descricao })
+        .eq("id", idAtual);
+      erro = r.error;
     } else {
-      const { error } = await client
+      // INSERT
+      var r = await client
         .from("turmas")
-        .insert([{ nome, descricao }]);
+        .insert([{ nome: nome, descricao: descricao }]);
+      erro = r.error;
+    }
 
-      if (error) { console.error(error); toast("Erro ao criar turma", true); return; }
+    // reset loading
+    salvando = false;
+    document.getElementById("btnSalvar").textContent = "Salvar";
+    document.getElementById("btnSalvar").disabled    = false;
+
+    if (erro) {
+      console.error(erro);
+      toast("Erro ao salvar: " + erro.message, true);
+      return;
     }
 
     fecharModal();
-    toast(editando ? "Turma atualizada" : "Turma criada");
+    editando = null;
+    toast(idAtual ? "Turma atualizada ✦" : "Turma criada ✦");
     await carregarTurmas();
   }
 
-  // ── excluirTurma (igual ao original, + toast) ────
+  // ── excluirTurma ──────────────────────────────────
   async function excluirTurma(id) {
-    if (!confirm("Deseja excluir esta turma?")) return;
+    if (!confirm("Deseja excluir esta turma?\nSe houver alunos vinculados, o vínculo será removido.")) return;
 
-    const { error } = await client
-      .from("turmas")
-      .delete()
-      .eq("id", id);
+    var r = await client.from("turmas").delete().eq("id", id);
 
-    if (error) {
-      console.error(error);
-      toast("Erro ao excluir. Verifique se há alunos vinculados.", true);
+    if (r.error) {
+      console.error(r.error);
+      toast("Erro ao excluir turma", true);
       return;
     }
 
@@ -605,35 +892,29 @@
     await carregarTurmas();
   }
 
-  // Excluir pelo botão dentro do modal
   async function excluirAtual() {
     if (!editando) return;
+    var id = editando;
     fecharModal();
-    await excluirTurma(editando);
+    editando = null;
+    await excluirTurma(id);
   }
 
-  // ── criarTurmasIniciais (igual ao original) ──────
+  // ── criarTurmasIniciais (original preservado) ─────
   async function criarTurmasIniciais() {
-    const nomesExistentes = turmas.map(t => (t.nome || "").toLowerCase());
-    const novasTurmas = [];
+    if (!client) return;
+    var nomes = turmas.map(function(t){ return (t.nome || "").toLowerCase(); });
+    var novas = [];
 
-    if (!nomesExistentes.includes("forja")) {
-      novasTurmas.push({
-        nome: "Forja",
-        descricao: "Turma de formação cristã e discipulado de jovens."
-      });
-    }
+    if (!nomes.includes("forja"))
+      novas.push({ nome: "Forja", descricao: "Turma de formação cristã e discipulado de jovens." });
 
-    if (!nomesExistentes.includes("juniores da fé")) {
-      novasTurmas.push({
-        nome: "Juniores da Fé",
-        descricao: "Turma voltada à formação bíblica de crianças e pré-adolescentes."
-      });
-    }
+    if (!nomes.includes("juniores da fé"))
+      novas.push({ nome: "Juniores da Fé", descricao: "Turma voltada à formação bíblica de crianças e pré-adolescentes." });
 
-    if (novasTurmas.length) {
-      const { error } = await client.from("turmas").insert(novasTurmas);
-      if (error) { console.error(error); toast("Erro ao criar turmas iniciais.", true); return; }
+    if (novas.length) {
+      var r = await client.from("turmas").insert(novas);
+      if (r.error) { console.error(r.error); return; }
       await carregarTurmas();
     }
   }
@@ -645,22 +926,26 @@
     el.textContent = msg;
     el.className   = "toast show" + (isError ? " error" : "");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function() { el.className = "toast"; }, 3000);
+    toastTimer = setTimeout(function(){ el.className = "toast"; }, 3500);
   }
 
   // ── Skeleton ──────────────────────────────────────
   function renderSkeleton() {
-    document.getElementById("listaTurmas").innerHTML = Array.from({ length: 4 }).map(() => `
-      <div class="skeleton-row">
-        <div class="skel" style="width:55%"></div>
-        <div class="skel" style="width:75%"></div>
-        <div class="skel" style="width:40%"></div>
-        <div class="skel" style="width:90px"></div>
-      </div>`).join("");
+    document.getElementById("listaTurmas").innerHTML =
+      [1,2,3,4].map(function() {
+        return '<div class="skeleton-row">'
+          + '<div class="skel" style="width:45%"></div>'
+          + '<div class="skel" style="width:70%"></div>'
+          + '<div class="skel" style="width:35%"></div>'
+          + '<div class="skel" style="width:90px"></div>'
+          + '</div>';
+      }).join("");
     document.getElementById("countText").textContent = "carregando…";
+    document.getElementById("statTotal").textContent = "—";
+    document.getElementById("statMes").textContent   = "—";
   }
 
-  // ── init (igual ao original) ──────────────────────
+  // ── init ──────────────────────────────────────────
   async function init() {
     renderSkeleton();
     await carregarTurmas();
