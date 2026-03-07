@@ -1,380 +1,733 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academia VeritasWay • Alunos</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold:       #C9A84C;
+      --gold-light: #E8C97A;
+      --deep:       #0E0B07;
+      --surface:    #161209;
+      --card:       #1C1610;
+      --border:     rgba(201,168,76,0.12);
+      --border-hov: rgba(201,168,76,0.30);
+      --parch:      #F9F3E8;
+      --muted:      #8A7A62;
+      --green:      #7AB87A;
+      --red:        #C98A8A;
+    }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-<title>Academia VeritasWay • Alunos</title>
+    body {
+      background: var(--deep);
+      color: var(--parch);
+      font-family: 'Cormorant Garamond', serif;
+      min-height: 100vh;
+    }
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    /* ── HEADER ─────────────────────────────────── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 52px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+    }
 
-<style>
+    .header-brand {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      text-decoration: none;
+    }
 
-body{
-background:#141210;
-color:#F9F3E8;
-font-family:Arial;
-margin:0;
-padding:0;
-}
+    /* ── BUTTONS ─────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 26px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.56rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.22s;
+      border: none;
+      line-height: 1;
+      white-space: nowrap;
+    }
 
-header{
-background:#1c1916;
-padding:20px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-bottom:1px solid #333;
-}
+    .btn-gold   { background: var(--gold); color: var(--deep); }
+    .btn-gold:hover { background: var(--gold-light); }
 
-h1{
-color:#C9A84C;
-margin:0;
-}
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
 
-.container{
-max-width:1000px;
-margin:auto;
-padding:30px;
-}
+    .btn-danger {
+      background: transparent;
+      border: 1px solid rgba(201,138,138,0.30);
+      color: var(--red);
+    }
+    .btn-danger:hover { background: rgba(201,138,138,0.08); }
 
-.card{
-background:#1c1916;
-padding:20px;
-border-radius:10px;
-margin-bottom:20px;
-}
+    .btn-sm { padding: 7px 14px; font-size: 0.5rem; }
 
-input,select{
-width:100%;
-padding:10px;
-margin-top:5px;
-margin-bottom:15px;
-background:#2a2723;
-border:none;
-color:white;
-border-radius:5px;
-}
+    /* ── LAYOUT ──────────────────────────────────── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 52px 80px;
+    }
 
-button{
-background:#C9A84C;
-border:none;
-padding:10px 15px;
-border-radius:5px;
-cursor:pointer;
-font-weight:bold;
-}
+    /* ── PAGE TITLE ──────────────────────────────── */
+    .page-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
 
-button:hover{
-opacity:0.9;
-}
+    .page-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      text-transform: uppercase;
+      opacity: 0.8;
+      margin-bottom: 10px;
+    }
 
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:20px;
-}
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 900;
+      color: var(--parch);
+      line-height: 1;
+    }
 
-th,td{
-padding:10px;
-border-bottom:1px solid #333;
-text-align:left;
-}
+    .page-title em { font-style: italic; color: var(--gold); }
 
-th{
-color:#C9A84C;
-}
+    /* ── FILTER BAR ──────────────────────────────── */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
 
-.action-btn{
-background:#333;
-color:white;
-margin-right:5px;
-}
+    .search-wrap {
+      display: flex;
+      border: 1px solid var(--border);
+      flex: 1;
+      min-width: 200px;
+      max-width: 360px;
+      transition: border-color 0.25s;
+    }
 
-.delete{
-background:#8b2d2d;
-}
+    .search-wrap:focus-within { border-color: rgba(201,168,76,0.4); }
 
-</style>
+    .search-input {
+      flex: 1;
+      padding: 11px 16px;
+      background: var(--card);
+      border: none;
+      outline: none;
+      color: var(--parch);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+    }
 
+    .search-input::placeholder { color: var(--muted); opacity: 0.5; }
+
+    .search-icon {
+      padding: 11px 14px;
+      background: var(--card);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+
+    .filter-select {
+      padding: 11px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      outline: none;
+      cursor: pointer;
+      -webkit-appearance: none;
+      min-width: 200px;
+      transition: border-color 0.22s;
+    }
+
+    .filter-select:focus { border-color: rgba(201,168,76,0.4); }
+    .filter-select option { background: #1C1610; }
+
+    /* ── TABLE ───────────────────────────────────── */
+    .table-wrap {
+      background: var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .table-head {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1.6fr 140px;
+      background: rgba(201,168,76,0.06);
+      border-bottom: 1px solid rgba(201,168,76,0.15);
+    }
+
+    .table-head span {
+      padding: 13px 18px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.48rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1.6fr 140px;
+      background: var(--deep);
+      align-items: center;
+      transition: background 0.2s;
+    }
+
+    .table-row:hover { background: rgba(201,168,76,0.04); }
+
+    .table-cell { padding: 13px 18px; }
+
+    /* Nome cell with avatar */
+    .cell-nome {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .av {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, #2C2318, rgba(122,184,122,0.28));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.68rem;
+      color: var(--parch);
+      flex-shrink: 0;
+    }
+
+    .nome-val  { font-size: 0.93rem; font-weight: 600; color: var(--parch); }
+    .email-val { font-size: 0.88rem; color: var(--muted); font-style: italic; }
+    .turma-val { font-size: 0.9rem;  color: var(--parch); }
+
+    .none-val  { color: var(--muted); font-style: italic; }
+
+    .cell-actions { display: flex; gap: 6px; }
+
+    .table-footer {
+      background: var(--card);
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .count-text {
+      font-family: 'Cinzel', serif;
+      font-size: 0.48rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.6;
+    }
+
+    /* ── STATES ──────────────────────────────────── */
+    .state-box {
+      background: var(--deep);
+      padding: 64px;
+      text-align: center;
+    }
+
+    .state-glyph { font-size: 1.4rem; opacity: 0.25; margin-bottom: 12px; }
+
+    .state-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── SKELETON ────────────────────────────────── */
+    .skeleton-row {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1.6fr 140px;
+      background: var(--deep);
+      padding: 16px 18px;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .skel {
+      height: 13px;
+      background: linear-gradient(
+        90deg,
+        rgba(201,168,76,0.04) 25%,
+        rgba(201,168,76,0.10) 50%,
+        rgba(201,168,76,0.04) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 2px;
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── TOAST ───────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: var(--card);
+      border: 1px solid var(--border-hov);
+      padding: 14px 24px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.28s ease;
+      pointer-events: none;
+      z-index: 200;
+    }
+
+    .toast.show  { opacity: 1; transform: translateY(0); }
+    .toast.error { color: var(--red); border-color: rgba(201,138,138,0.35); }
+
+    /* ── MODAL ───────────────────────────────────── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8,6,3,0.88);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border-hov);
+      width: 100%;
+      max-width: 460px;
+      padding: 44px;
+      position: relative;
+      animation: modalIn 0.28s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px; right: 22px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+
+    .modal-close:hover { color: var(--gold); }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--parch);
+      margin-bottom: 28px;
+    }
+
+    /* ── FORM ────────────────────────────────────── */
+    .field { margin-bottom: 18px; }
+
+    .field-label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.5rem;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.75;
+      margin-bottom: 8px;
+    }
+
+    .field-input,
+    .field-select {
+      display: block;
+      width: 100%;
+      padding: 13px 16px;
+      background: rgba(14,11,7,0.9);
+      border: 1px solid rgba(201,168,76,0.2);
+      color: var(--parch);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.25s;
+      -webkit-appearance: none;
+    }
+
+    .field-input::placeholder { color: var(--muted); opacity: 0.45; }
+
+    .field-input:focus,
+    .field-select:focus { border-color: rgba(201,168,76,0.5); }
+
+    .field-select { cursor: pointer; }
+    .field-select option { background: #1C1610; }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 28px;
+    }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 768px) {
+      .container { padding: 28px 20px 60px; }
+      header     { padding: 0 20px; }
+      .table-head,
+      .table-row { grid-template-columns: 1fr 1fr; }
+      .table-head span:nth-child(n+3),
+      .table-row .table-cell:nth-child(n+3) { display: none; }
+    }
+  </style>
 </head>
 <body>
 
+<!-- ── HEADER ──────────────────────────────────── -->
 <header>
-
-<h1>Academia VeritasWay</h1>
-
-<button onclick="abrirNovo()">Novo Aluno</button>
-
+  <span class="header-brand">Academia VeritasWay</span>
+  <button class="btn btn-gold" onclick="abrirNovo()">+ Novo Aluno</button>
 </header>
 
+<!-- ── MAIN ────────────────────────────────────── -->
 <div class="container">
 
-<div class="card">
+  <div class="page-header">
+    <div>
+      <p class="page-eyebrow">Gestão · Alunos</p>
+      <h1 class="page-title">Gerenciar <em>Alunos</em></h1>
+    </div>
+  </div>
 
-<h2>Buscar</h2>
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <input class="search-input" id="busca" placeholder="Buscar aluno…" oninput="render()">
+      <div class="search-icon">🔍</div>
+    </div>
+    <select class="filter-select" id="filtroTurma" onchange="render()">
+      <option value="">Todas as turmas</option>
+    </select>
+  </div>
 
-<input id="busca" placeholder="Buscar aluno..." oninput="render()">
-
-<select id="filtroTurma" onchange="render()">
-<option value="">Todas as turmas</option>
-</select>
-
-</div>
-
-<div class="card">
-
-<h2>Alunos</h2>
-
-<table>
-
-<thead>
-
-<tr>
-<th>Nome</th>
-<th>Email</th>
-<th>Turma</th>
-<th>Ações</th>
-</tr>
-
-</thead>
-
-<tbody id="lista"></tbody>
-
-</table>
-
-</div>
+  <!-- Table -->
+  <div class="table-wrap">
+    <div class="table-head">
+      <span>Nome</span>
+      <span>E-mail</span>
+      <span>Turma</span>
+      <span>Ações</span>
+    </div>
+    <div id="lista"></div>
+    <div class="table-footer">
+      <span class="count-text" id="countText">—</span>
+    </div>
+  </div>
 
 </div>
 
-<div id="modal" style="display:none">
+<!-- ── MODAL ────────────────────────────────────── -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal()">✕</button>
+    <h2 class="modal-title" id="tituloModal">Novo Aluno</h2>
 
-<div style="position:fixed;inset:0;background:black;opacity:.6"></div>
+    <div class="field">
+      <label class="field-label">Nome</label>
+      <input class="field-input" id="nome" placeholder="Nome completo">
+    </div>
 
-<div style="
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:#1c1916;
-padding:30px;
-border-radius:10px;
-width:350px;
-">
+    <div class="field">
+      <label class="field-label">E-mail</label>
+      <input class="field-input" id="email" type="email" placeholder="email@exemplo.com">
+    </div>
 
-<h2 id="tituloModal">Novo aluno</h2>
+    <div class="field">
+      <label class="field-label">Turma</label>
+      <select class="field-select" id="turma"></select>
+    </div>
 
-<input id="nome" placeholder="Nome">
-
-<input id="email" placeholder="Email">
-
-<select id="turma"></select>
-
-<button onclick="salvar()">Salvar</button>
-<button onclick="fecharModal()">Cancelar</button>
-
+    <div class="modal-actions">
+      <button class="btn btn-danger"  id="btnExcluir" style="display:none; margin-right:auto" onclick="excluirAtual()">Excluir</button>
+      <button class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-gold"    onclick="salvar()">Salvar</button>
+    </div>
+  </div>
 </div>
 
-</div>
+<!-- ── TOAST ─────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
 
 <script>
-
-const SUPABASE_URL = "COLE_AQUI_URL";
-const SUPABASE_KEY = "COLE_AQUI_KEY";
-
-const client = supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
-
-let alunos=[]
-let turmas=[]
-let editando=null
-
-async function carregarTurmas(){
-
-let {data}=await client
-.from("turmas")
-.select("*")
-
-turmas=data||[]
-
-const select=document.getElementById("turma")
-const filtro=document.getElementById("filtroTurma")
-
-select.innerHTML=""
-filtro.innerHTML='<option value="">Todas as turmas</option>'
-
-turmas.forEach(t=>{
-
-select.innerHTML+=`<option value="${t.id}">${t.nome}</option>`
-
-filtro.innerHTML+=`<option value="${t.id}">${t.nome}</option>`
-
-})
-
-}
-
-async function carregarAlunos(){
-
-let {data}=await client
-.from("alunos")
-.select("*")
-.order("created_at",{ascending:false})
-
-alunos=data||[]
-
-render()
-
-}
-
-function turmaNome(id){
-
-let t=turmas.find(x=>x.id==id)
-
-return t?t.nome:"-"
-
-}
-
-function render(){
-
-let busca=document.getElementById("busca").value.toLowerCase()
-
-let turma=document.getElementById("filtroTurma").value
-
-let lista=alunos.filter(a=>{
-
-let okBusca=!busca||a.nome.toLowerCase().includes(busca)
-
-let okTurma=!turma||a.turma_id==turma
-
-return okBusca&&okTurma
-
-})
-
-const tbody=document.getElementById("lista")
-
-tbody.innerHTML=""
-
-lista.forEach(a=>{
-
-tbody.innerHTML+=`
-
-<tr>
-
-<td>${a.nome}</td>
-
-<td>${a.email}</td>
-
-<td>${turmaNome(a.turma_id)}</td>
-
-<td>
-
-<button class="action-btn" onclick="editar('${a.id}')">Editar</button>
-
-<button class="action-btn delete" onclick="excluir('${a.id}')">Excluir</button>
-
-</td>
-
-</tr>
-
-`
-
-})
-
-}
-
-function abrirNovo(){
-
-editando=null
-
-document.getElementById("tituloModal").innerText="Novo aluno"
-
-document.getElementById("nome").value=""
-document.getElementById("email").value=""
-document.getElementById("modal").style.display="block"
-
-}
-
-function editar(id){
-
-let a=alunos.find(x=>x.id==id)
-
-editando=id
-
-document.getElementById("tituloModal").innerText="Editar aluno"
-
-document.getElementById("nome").value=a.nome
-document.getElementById("email").value=a.email
-document.getElementById("turma").value=a.turma_id
-
-document.getElementById("modal").style.display="block"
-
-}
-
-function fecharModal(){
-
-document.getElementById("modal").style.display="none"
-
-}
-
-async function salvar(){
-
-let nome=document.getElementById("nome").value
-let email=document.getElementById("email").value
-let turma=document.getElementById("turma").value
-
-if(!nome||!email){
-
-alert("Preencha nome e email")
-
-return
-
-}
-
-if(editando){
-
-await client
-.from("alunos")
-.update({nome,email,turma_id:turma})
-.eq("id",editando)
-
-}else{
-
-await client
-.from("alunos")
-.insert({nome,email,turma_id:turma})
-
-}
-
-fecharModal()
-
-await carregarAlunos()
-
-}
-
-async function excluir(id){
-
-if(!confirm("Excluir aluno?"))return
-
-await client
-.from("alunos")
-.delete()
-.eq("id",id)
-
-await carregarAlunos()
-
-}
-
-async function init(){
-
-await carregarTurmas()
-
-await carregarAlunos()
-
-}
-
-init()
-
+  // ── Config ────────────────────────────────────────
+  const SUPABASE_URL = "COLE_AQUI_URL";
+  const SUPABASE_KEY = "COLE_AQUI_KEY";
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  // ── State (igual ao original) ─────────────────────
+  let alunos   = [];
+  let turmas   = [];
+  let editando = null;
+
+  // ── carregarTurmas (igual ao original) ───────────
+  async function carregarTurmas() {
+    let { data } = await client.from("turmas").select("*");
+    turmas = data || [];
+
+    const select = document.getElementById("turma");
+    const filtro = document.getElementById("filtroTurma");
+
+    select.innerHTML = '<option value="">Sem turma</option>';
+    filtro.innerHTML = '<option value="">Todas as turmas</option>';
+
+    turmas.forEach(t => {
+      select.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
+      filtro.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
+    });
+  }
+
+  // ── carregarAlunos (igual ao original) ───────────
+  async function carregarAlunos() {
+    let { data } = await client
+      .from("alunos")
+      .select("*")
+      .order("created_at", { ascending: false });
+    alunos = data || [];
+    render();
+  }
+
+  // ── turmaNome (igual ao original) ────────────────
+  function turmaNome(id) {
+    let t = turmas.find(x => x.id == id);
+    return t ? t.nome : null;
+  }
+
+  // ── iniciais ──────────────────────────────────────
+  function iniciais(nome) {
+    return (nome || "?").split(" ").filter(Boolean)
+      .slice(0, 2).map(p => p[0].toUpperCase()).join("");
+  }
+
+  // ── render (lógica igual ao original) ────────────
+  function render() {
+    let busca = document.getElementById("busca").value.toLowerCase();
+    let turma = document.getElementById("filtroTurma").value;
+
+    let lista = alunos.filter(a => {
+      let okBusca = !busca || (a.nome || "").toLowerCase().includes(busca);
+      let okTurma = !turma || a.turma_id == turma;
+      return okBusca && okTurma;
+    });
+
+    const el = document.getElementById("lista");
+
+    if (!lista.length) {
+      el.innerHTML = `
+        <div class="state-box">
+          <div class="state-glyph">✦</div>
+          <p class="state-text">Nenhum aluno encontrado.</p>
+        </div>`;
+    } else {
+      el.innerHTML = lista.map(a => {
+        const tn = turmaNome(a.turma_id);
+        return `
+          <div class="table-row">
+            <div class="table-cell">
+              <div class="cell-nome">
+                <div class="av">${iniciais(a.nome)}</div>
+                <span class="nome-val">${a.nome || "—"}</span>
+              </div>
+            </div>
+            <div class="table-cell">
+              <span class="${a.email ? 'email-val' : 'none-val'}">${a.email || "—"}</span>
+            </div>
+            <div class="table-cell">
+              <span class="${tn ? 'turma-val' : 'none-val'}">${tn || "Sem turma"}</span>
+            </div>
+            <div class="table-cell">
+              <div class="cell-actions">
+                <button class="btn btn-outline btn-sm" onclick="editar('${a.id}')">Editar</button>
+                <button class="btn btn-danger  btn-sm" onclick="excluir('${a.id}')">Excluir</button>
+              </div>
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    const n = lista.length;
+    document.getElementById("countText").textContent =
+      n + (n === 1 ? " aluno" : " alunos");
+  }
+
+  // ── abrirNovo (igual ao original) ────────────────
+  function abrirNovo() {
+    editando = null;
+    document.getElementById("tituloModal").textContent = "Novo Aluno";
+    document.getElementById("nome").value  = "";
+    document.getElementById("email").value = "";
+    document.getElementById("turma").value = "";
+    document.getElementById("btnExcluir").style.display = "none";
+    document.getElementById("overlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  // ── editar (igual ao original) ────────────────────
+  function editar(id) {
+    let a = alunos.find(x => x.id == id);
+    editando = id;
+    document.getElementById("tituloModal").textContent = "Editar Aluno";
+    document.getElementById("nome").value  = a.nome      || "";
+    document.getElementById("email").value = a.email     || "";
+    document.getElementById("turma").value = a.turma_id  || "";
+    document.getElementById("btnExcluir").style.display = "inline-flex";
+    document.getElementById("overlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  // ── fecharModal ───────────────────────────────────
+  function fecharModal() {
+    document.getElementById("overlay").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  function overlayClick(e) {
+    if (e.target === document.getElementById("overlay")) fecharModal();
+  }
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") fecharModal();
+  });
+
+  // ── salvar (igual ao original, + toast) ──────────
+  async function salvar() {
+    let nome  = document.getElementById("nome").value;
+    let email = document.getElementById("email").value;
+    let turma = document.getElementById("turma").value;
+
+    if (!nome || !email) {
+      toast("Preencha nome e e-mail", true);
+      return;
+    }
+
+    if (editando) {
+      await client.from("alunos")
+        .update({ nome, email, turma_id: turma })
+        .eq("id", editando);
+    } else {
+      await client.from("alunos")
+        .insert({ nome, email, turma_id: turma });
+    }
+
+    fecharModal();
+    toast(editando ? "Aluno atualizado" : "Aluno cadastrado");
+    await carregarAlunos();
+  }
+
+  // ── excluir (igual ao original, + toast) ─────────
+  async function excluir(id) {
+    if (!confirm("Excluir aluno?")) return;
+    await client.from("alunos").delete().eq("id", id);
+    toast("Aluno removido");
+    await carregarAlunos();
+  }
+
+  // Botão excluir dentro do modal
+  async function excluirAtual() {
+    if (!editando) return;
+    fecharModal();
+    await excluir(editando);
+  }
+
+  // ── Toast ─────────────────────────────────────────
+  let toastTimer;
+  function toast(msg, isError = false) {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.className   = "toast show" + (isError ? " error" : "");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.className = "toast"; }, 3000);
+  }
+
+  // ── Skeleton enquanto carrega ─────────────────────
+  function renderSkeleton() {
+    document.getElementById("lista").innerHTML = Array.from({ length: 5 }).map(() => `
+      <div class="skeleton-row">
+        <div class="skel" style="width:55%"></div>
+        <div class="skel" style="width:65%"></div>
+        <div class="skel" style="width:40%"></div>
+        <div class="skel" style="width:80px"></div>
+      </div>`).join("");
+    document.getElementById("countText").textContent = "carregando…";
+  }
+
+  // ── init (igual ao original) ──────────────────────
+  async function init() {
+    renderSkeleton();
+    await carregarTurmas();
+    await carregarAlunos();
+  }
+
+  init();
 </script>
-
 </body>
 </html>
