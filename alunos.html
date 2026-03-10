@@ -599,27 +599,28 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  // ─────────────────────────────────────────────────
-  // Script corrigido — turma_id enviado como UUID correto
-  // ─────────────────────────────────────────────────
   const SUPABASE_URL = "https://aapgvdmecbuufaxdmqtq.supabase.co";
   const SUPABASE_KEY = "sb_publishable_CXvxw1HWYE6_uuLnlZWLaA_xJ_evCCy";
 
   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  let alunos   = [];
-  let turmas   = [];
+  let alunos = [];
+  let turmas = [];
   let editando = null;
   let salvando = false;
+  let toastTimer;
 
-  // ── carregarTurmas ────────────────────────────────
   async function carregarTurmas() {
     const { data, error } = await client
       .from("turmas")
       .select("id,nome")
       .order("nome", { ascending: true });
 
-    if (error) { console.error("Erro ao carregar turmas:", error); toast("Erro ao carregar turmas", true); return; }
+    if (error) {
+      console.error("Erro ao carregar turmas:", error);
+      toast("Erro ao carregar turmas: " + error.message, true);
+      return;
+    }
 
     turmas = data || [];
 
@@ -635,39 +636,46 @@
     });
   }
 
-  // ── carregarAlunos ────────────────────────────────
   async function carregarAlunos() {
     const { data, error } = await client
       .from("alunos")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) { console.error("Erro ao carregar alunos:", error); toast("Erro ao carregar alunos", true); return; }
+    if (error) {
+      console.error("Erro ao carregar alunos:", error);
+      toast("Erro ao carregar alunos: " + error.message, true);
+      return;
+    }
 
     alunos = data || [];
     render();
   }
 
-  // ── turmaNome ─────────────────────────────────────
   function turmaNome(id) {
     const turma = turmas.find((t) => String(t.id) === String(id));
     return turma ? turma.nome : null;
   }
 
-  // ── iniciais ──────────────────────────────────────
   function iniciais(nome) {
-    return (nome || "?").split(" ").filter(Boolean).slice(0,2).map(p => p[0].toUpperCase()).join("");
+    return (nome || "?")
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0].toUpperCase())
+      .join("");
   }
 
-  // ── render ────────────────────────────────────────
   function render() {
     const busca = document.getElementById("busca").value.toLowerCase();
     const turma = document.getElementById("filtroTurma").value;
 
     const lista = alunos.filter((a) => {
-      const okBusca = !busca ||
-        (a.nome  || "").toLowerCase().includes(busca) ||
+      const okBusca =
+        !busca ||
+        (a.nome || "").toLowerCase().includes(busca) ||
         (a.email || "").toLowerCase().includes(busca);
+
       const okTurma = !turma || String(a.turma_id) === String(turma);
       return okBusca && okTurma;
     });
@@ -700,7 +708,7 @@
             <div class="table-cell">
               <div class="cell-actions">
                 <button class="btn btn-outline btn-sm" onclick="editar('${a.id}')">Editar</button>
-                <button class="btn btn-danger  btn-sm" onclick="excluir('${a.id}')">Excluir</button>
+                <button class="btn btn-danger btn-sm" onclick="excluir('${a.id}')">Excluir</button>
               </div>
             </div>
           </div>`;
@@ -711,40 +719,37 @@
     document.getElementById("countText").textContent = n + (n === 1 ? " aluno" : " alunos");
   }
 
-  // ── abrirNovo ─────────────────────────────────────
   function abrirNovo() {
     editando = null;
     document.getElementById("modalEyebrow").textContent = "Novo aluno";
-    document.getElementById("tituloModal").innerHTML    = "Adicionar <em>Aluno</em>";
-    document.getElementById("nome").value  = "";
+    document.getElementById("tituloModal").innerHTML = "Adicionar <em>Aluno</em>";
+    document.getElementById("nome").value = "";
     document.getElementById("email").value = "";
     document.getElementById("turma").value = "";
     document.getElementById("btnExcluir").style.display = "none";
-    document.getElementById("btnSalvar").textContent    = "Salvar";
-    document.getElementById("btnSalvar").disabled       = false;
+    document.getElementById("btnSalvar").textContent = "Salvar";
+    document.getElementById("btnSalvar").disabled = false;
     document.getElementById("overlay").classList.add("open");
     document.body.style.overflow = "hidden";
   }
 
-  // ── editar ────────────────────────────────────────
   function editar(id) {
     const a = alunos.find((x) => String(x.id) === String(id));
     if (!a) return;
 
     editando = id;
     document.getElementById("modalEyebrow").textContent = "Editar aluno";
-    document.getElementById("tituloModal").innerHTML    = "Editar <em>Aluno</em>";
-    document.getElementById("nome").value  = a.nome  || "";
+    document.getElementById("tituloModal").innerHTML = "Editar <em>Aluno</em>";
+    document.getElementById("nome").value = a.nome || "";
     document.getElementById("email").value = a.email || "";
     document.getElementById("turma").value = a.turma_id || "";
     document.getElementById("btnExcluir").style.display = "inline-flex";
-    document.getElementById("btnSalvar").textContent    = "Salvar";
-    document.getElementById("btnSalvar").disabled       = false;
+    document.getElementById("btnSalvar").textContent = "Salvar";
+    document.getElementById("btnSalvar").disabled = false;
     document.getElementById("overlay").classList.add("open");
     document.body.style.overflow = "hidden";
   }
 
-  // ── fecharModal ───────────────────────────────────
   function fecharModal() {
     document.getElementById("overlay").classList.remove("open");
     document.body.style.overflow = "";
@@ -754,41 +759,52 @@
     if (e.target === document.getElementById("overlay")) fecharModal();
   }
 
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") fecharModal(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") fecharModal();
+  });
 
-  // ── salvar ────────────────────────────────────────
   async function salvar() {
     if (salvando) return;
 
-    const nome  = document.getElementById("nome").value.trim();
+    const nome = document.getElementById("nome").value.trim();
     const email = document.getElementById("email").value.trim();
-    const turma = document.getElementById("turma").value || null;
-
-    if (!nome || !email) { toast("Preencha nome e e-mail", true); return; }
-
-    // Captura editando ANTES de fechar
+    const turmaSelecionada = document.getElementById("turma").value;
+    const turma_id = turmaSelecionada ? turmaSelecionada : null;
     const idEditando = editando;
 
-    salvando = true;
-    document.getElementById("btnSalvar").textContent = "Salvando…";
-    document.getElementById("btnSalvar").disabled    = true;
+    if (!nome || !email) {
+      toast("Preencha nome e e-mail", true);
+      return;
+    }
 
-    let error;
+    salvando = true;
+    document.getElementById("btnSalvar").textContent = "Salvando...";
+    document.getElementById("btnSalvar").disabled = true;
+
+    let resposta;
 
     if (idEditando) {
-      ({ error } = await client.from("alunos")
-        .update({ nome, email, turma_id: turma })
-        .eq("id", idEditando));
+      resposta = await client
+        .from("alunos")
+        .update({ nome: nome, email: email, turma_id: turma_id })
+        .eq("id", idEditando)
+        .select();
     } else {
-      ({ error } = await client.from("alunos")
-        .insert([{ nome, email, turma_id: turma }]));
+      resposta = await client
+        .from("alunos")
+        .insert([{ nome: nome, email: email, turma_id: turma_id }])
+        .select();
     }
 
     salvando = false;
     document.getElementById("btnSalvar").textContent = "Salvar";
-    document.getElementById("btnSalvar").disabled    = false;
+    document.getElementById("btnSalvar").disabled = false;
 
-    if (error) { console.error(error); toast("Erro ao salvar aluno", true); return; }
+    if (resposta.error) {
+      console.error("Erro real ao salvar aluno:", resposta.error);
+      toast("Erro: " + resposta.error.message, true);
+      return;
+    }
 
     fecharModal();
     editando = null;
@@ -796,33 +812,37 @@
     await carregarAlunos();
   }
 
-  // ── excluir ───────────────────────────────────────
   async function excluir(id) {
     if (!confirm("Excluir aluno?")) return;
+
     const { error } = await client.from("alunos").delete().eq("id", id);
-    if (error) { console.error(error); toast("Erro ao excluir aluno", true); return; }
+
+    if (error) {
+      console.error("Erro ao excluir aluno:", error);
+      toast("Erro ao excluir: " + error.message, true);
+      return;
+    }
+
     toast("Aluno removido");
     await carregarAlunos();
   }
 
   async function excluirAtual() {
     if (!editando) return;
+    const id = editando;
     fecharModal();
-    await excluir(editando);
     editando = null;
+    await excluir(id);
   }
 
-  // ── Toast ─────────────────────────────────────────
-  let toastTimer;
   function toast(msg, isError) {
     const el = document.getElementById("toast");
     el.textContent = msg;
-    el.className   = "toast show" + (isError ? " error" : "");
+    el.className = "toast show" + (isError ? " error" : "");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { el.className = "toast"; }, 3200);
+    toastTimer = setTimeout(() => { el.className = "toast"; }, 4000);
   }
 
-  // ── Skeleton ──────────────────────────────────────
   function renderSkeleton() {
     document.getElementById("lista").innerHTML =
       Array.from({ length: 5 }).map(() => `
@@ -835,7 +855,6 @@
     document.getElementById("countText").textContent = "carregando…";
   }
 
-  // ── init ──────────────────────────────────────────
   async function init() {
     renderSkeleton();
     await carregarTurmas();
