@@ -5,20 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Academia VeritasWay • Alunos</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
       --gold:       #C9A84C;
       --gold-light: #E8C97A;
-      --deep:       #0E0B07;
-      --surface:    #161209;
-      --card:       #1C1610;
-      --border:     rgba(201,168,76,0.12);
-      --border-hov: rgba(201,168,76,0.30);
-      --parch:      #F9F3E8;
-      --muted:      #8A7A62;
-      --green:      #7AB87A;
-      --red:        #C98A8A;
+      --deep:       #F8F4EE;
+      --surface:    #FFFFFF;
+      --card:       #F2EDE5;
+      --border:     rgba(160,130,60,0.18);
+      --border-mid: rgba(160,130,60,0.32);
+      --border-hov: rgba(160,130,60,0.55);
+      --parch:      #1A1208;
+      --parch-dim:  #3D2E1A;
+      --muted:      #7A6A52;
+      --red:        #A05050;
+      --red-border: rgba(160,80,80,0.28);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,29 +29,45 @@
       background: var(--deep);
       color: var(--parch);
       font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
       min-height: 100vh;
     }
 
-    /* ── HEADER ─────────────────────────────────── */
+    /* ── HEADER ──────────────────────────────────── */
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 0 52px;
-      height: 64px;
+      padding: 0 60px;
+      height: 68px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 40;
+      box-shadow: 0 1px 12px rgba(160,130,60,0.08);
     }
+
+    .header-left { display: flex; align-items: center; gap: 18px; }
+
+    .header-glyph { font-size: 0.75rem; color: var(--gold); opacity: 0.5; }
 
     .header-brand {
       font-family: 'Cinzel', serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.25em;
+      font-size: 0.82rem;
+      letter-spacing: 0.28em;
       color: var(--gold);
-      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .header-sep { width: 1px; height: 18px; background: var(--border-mid); }
+
+    .header-page {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      text-transform: uppercase;
     }
 
     /* ── BUTTONS ─────────────────────────────────── */
@@ -57,202 +75,219 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 11px 26px;
+      padding: 12px 28px;
       font-family: 'Cinzel', serif;
-      font-size: 0.56rem;
-      letter-spacing: 0.25em;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.22s;
+      transition: all 0.25s ease;
       border: none;
       line-height: 1;
       white-space: nowrap;
     }
 
-    .btn-gold   { background: var(--gold); color: var(--deep); }
-    .btn-gold:hover { background: var(--gold-light); }
+    .btn-gold {
+      background: linear-gradient(135deg, #C9A84C, #B0903A);
+      color: #FFF8EC;
+      box-shadow: 0 2px 14px rgba(201,168,76,0.25);
+    }
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #E8C97A, #C9A84C);
+      box-shadow: 0 4px 22px rgba(201,168,76,0.35);
+      transform: translateY(-1px);
+    }
+    .btn-gold:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
     .btn-outline {
       background: transparent;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-mid);
       color: var(--muted);
     }
     .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
 
     .btn-danger {
       background: transparent;
-      border: 1px solid rgba(201,138,138,0.30);
+      border: 1px solid var(--red-border);
       color: var(--red);
     }
-    .btn-danger:hover { background: rgba(201,138,138,0.08); }
+    .btn-danger:hover { background: rgba(160,80,80,0.06); }
 
-    .btn-sm { padding: 7px 14px; font-size: 0.5rem; }
+    .btn-sm { padding: 9px 18px; font-size: 0.6rem; }
 
     /* ── LAYOUT ──────────────────────────────────── */
     .container {
-      max-width: 1100px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 48px 52px 80px;
+      padding: 56px 60px 100px;
     }
 
-    /* ── PAGE TITLE ──────────────────────────────── */
-    .page-header {
+    /* ── PAGE HERO ───────────────────────────────── */
+    .page-hero {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       gap: 24px;
-      margin-bottom: 40px;
+      margin-bottom: 48px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
     }
 
     .page-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-family: 'Cinzel', serif;
-      font-size: 0.52rem;
-      letter-spacing: 0.5em;
+      font-size: 0.62rem;
+      letter-spacing: 0.4em;
       color: var(--gold);
       text-transform: uppercase;
-      opacity: 0.8;
-      margin-bottom: 10px;
+      opacity: 0.75;
+      margin-bottom: 14px;
     }
+
+    .eyebrow-line { width: 24px; height: 1px; background: var(--gold); opacity: 0.4; }
 
     .page-title {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
       font-weight: 900;
       color: var(--parch);
-      line-height: 1;
+      line-height: 0.95;
     }
 
-    .page-title em { font-style: italic; color: var(--gold); }
+    .page-title em { font-style: italic; color: var(--gold); font-weight: 400; }
+
+    .page-desc {
+      font-size: 1.1rem;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.8;
+      margin-top: 10px;
+      font-weight: 300;
+    }
 
     /* ── FILTER BAR ──────────────────────────────── */
     .filter-bar {
       display: flex;
       gap: 8px;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
     }
 
     .search-wrap {
       display: flex;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-mid);
       flex: 1;
       min-width: 200px;
-      max-width: 360px;
+      max-width: 380px;
+      background: var(--surface);
       transition: border-color 0.25s;
     }
-
-    .search-wrap:focus-within { border-color: rgba(201,168,76,0.4); }
+    .search-wrap:focus-within { border-color: var(--gold); }
 
     .search-input {
       flex: 1;
-      padding: 11px 16px;
-      background: var(--card);
+      padding: 12px 16px;
+      background: transparent;
       border: none;
       outline: none;
       color: var(--parch);
       font-family: 'Cormorant Garamond', serif;
-      font-size: 0.95rem;
+      font-size: 1.05rem;
     }
-
     .search-input::placeholder { color: var(--muted); opacity: 0.5; }
 
     .search-icon {
-      padding: 11px 14px;
-      background: var(--card);
+      padding: 12px 14px;
       color: var(--muted);
       display: flex;
       align-items: center;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
 
     .filter-select {
-      padding: 11px 16px;
-      background: var(--card);
-      border: 1px solid var(--border);
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
       color: var(--muted);
       font-family: 'Cormorant Garamond', serif;
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       outline: none;
       cursor: pointer;
       -webkit-appearance: none;
       min-width: 200px;
       transition: border-color 0.22s;
     }
-
-    .filter-select:focus { border-color: rgba(201,168,76,0.4); }
-    .filter-select option { background: #1C1610; }
+    .filter-select:focus { border-color: var(--gold); }
+    .filter-select option { background: #FFFFFF; color: var(--parch); }
 
     /* ── TABLE ───────────────────────────────────── */
     .table-wrap {
       background: var(--border);
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 1px;
     }
 
     .table-head {
       display: grid;
-      grid-template-columns: 2fr 2fr 1.6fr 140px;
-      background: rgba(201,168,76,0.06);
-      border-bottom: 1px solid rgba(201,168,76,0.15);
+      grid-template-columns: 2fr 2fr 1.6fr 150px;
+      background: rgba(201,168,76,0.08);
+      border-bottom: 1px solid var(--border-mid);
     }
 
     .table-head span {
-      padding: 13px 18px;
+      padding: 14px 20px;
       font-family: 'Cinzel', serif;
-      font-size: 0.48rem;
-      letter-spacing: 0.3em;
+      font-size: 0.6rem;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--muted);
     }
 
     .table-row {
       display: grid;
-      grid-template-columns: 2fr 2fr 1.6fr 140px;
-      background: var(--deep);
+      grid-template-columns: 2fr 2fr 1.6fr 150px;
+      background: var(--surface);
       align-items: center;
-      transition: background 0.2s;
+      transition: background 0.2s, border-color 0.2s;
+      border-left: 2px solid transparent;
+    }
+    .table-row:hover {
+      background: rgba(201,168,76,0.05);
+      border-left-color: rgba(201,168,76,0.35);
     }
 
-    .table-row:hover { background: rgba(201,168,76,0.04); }
+    .table-cell { padding: 16px 20px; }
 
-    .table-cell { padding: 13px 18px; }
-
-    /* Nome cell with avatar */
-    .cell-nome {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .cell-nome { display: flex; align-items: center; gap: 12px; }
 
     .av {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: linear-gradient(135deg, #2C2318, rgba(122,184,122,0.28));
+      width: 36px; height: 36px;
+      flex-shrink: 0;
+      border: 1px solid var(--border-mid);
+      background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04));
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Cinzel', serif;
-      font-size: 0.68rem;
-      color: var(--parch);
-      flex-shrink: 0;
+      font-size: 0.72rem;
+      color: var(--gold);
     }
 
-    .nome-val  { font-size: 0.93rem; font-weight: 600; color: var(--parch); }
-    .email-val { font-size: 0.88rem; color: var(--muted); font-style: italic; }
-    .turma-val { font-size: 0.9rem;  color: var(--parch); }
-
-    .none-val  { color: var(--muted); font-style: italic; }
+    .nome-val  { font-size: 1.08rem; font-weight: 600; color: var(--parch); }
+    .email-val { font-size: 1rem; color: var(--muted); font-style: italic; }
+    .turma-val { font-size: 1rem; color: var(--parch-dim); }
+    .none-val  { color: var(--muted); font-style: italic; opacity: 0.5; }
 
     .cell-actions { display: flex; gap: 6px; }
 
     .table-footer {
-      background: var(--card);
-      padding: 12px 18px;
+      background: var(--surface);
+      padding: 13px 20px;
       border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
@@ -261,25 +296,25 @@
 
     .count-text {
       font-family: 'Cinzel', serif;
-      font-size: 0.48rem;
+      font-size: 0.6rem;
       letter-spacing: 0.3em;
       text-transform: uppercase;
       color: var(--muted);
-      opacity: 0.6;
+      opacity: 0.7;
     }
 
     /* ── STATES ──────────────────────────────────── */
     .state-box {
-      background: var(--deep);
-      padding: 64px;
+      background: var(--surface);
+      padding: 80px 40px;
       text-align: center;
     }
 
-    .state-glyph { font-size: 1.4rem; opacity: 0.25; margin-bottom: 12px; }
+    .state-ornament { font-size: 1rem; color: var(--gold); opacity: 0.2; margin-bottom: 16px; letter-spacing: 0.5em; }
 
     .state-text {
       font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       color: var(--muted);
       font-style: italic;
     }
@@ -287,10 +322,10 @@
     /* ── SKELETON ────────────────────────────────── */
     .skeleton-row {
       display: grid;
-      grid-template-columns: 2fr 2fr 1.6fr 140px;
-      background: var(--deep);
-      padding: 16px 18px;
-      gap: 18px;
+      grid-template-columns: 2fr 2fr 1.6fr 150px;
+      background: var(--surface);
+      padding: 18px 20px;
+      gap: 20px;
       align-items: center;
     }
 
@@ -298,12 +333,12 @@
       height: 13px;
       background: linear-gradient(
         90deg,
-        rgba(201,168,76,0.04) 25%,
-        rgba(201,168,76,0.10) 50%,
-        rgba(201,168,76,0.04) 75%
+        rgba(160,130,60,0.06) 25%,
+        rgba(160,130,60,0.14) 50%,
+        rgba(160,130,60,0.06) 75%
       );
       background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
+      animation: shimmer 1.8s infinite ease-in-out;
       border-radius: 2px;
     }
 
@@ -315,129 +350,163 @@
     /* ── TOAST ───────────────────────────────────── */
     .toast {
       position: fixed;
-      bottom: 32px;
-      right: 32px;
-      background: var(--card);
+      bottom: 36px;
+      right: 36px;
+      background: var(--surface);
       border: 1px solid var(--border-hov);
-      padding: 14px 24px;
+      padding: 16px 28px;
       font-family: 'Cinzel', serif;
-      font-size: 0.55rem;
+      font-size: 0.6rem;
       letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--gold);
       opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.28s ease;
+      transform: translateY(12px);
+      transition: all 0.32s cubic-bezier(.22,.68,0,1.2);
       pointer-events: none;
-      z-index: 200;
+      z-index: 300;
+      box-shadow: 0 8px 32px rgba(160,130,60,0.15);
+    }
+
+    .toast::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
     }
 
     .toast.show  { opacity: 1; transform: translateY(0); }
-    .toast.error { color: var(--red); border-color: rgba(201,138,138,0.35); }
+    .toast.error { color: var(--red); border-color: var(--red-border); }
+    .toast.error::before { background: linear-gradient(90deg, transparent, var(--red), transparent); }
 
     /* ── MODAL ───────────────────────────────────── */
     .overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(8,6,3,0.88);
+      background: rgba(20,14,6,0.65);
       z-index: 100;
       align-items: center;
       justify-content: center;
       padding: 32px;
     }
-
     .overlay.open { display: flex; }
 
     .modal {
       background: var(--surface);
-      border: 1px solid var(--border-hov);
+      border: 1px solid var(--border-mid);
       width: 100%;
-      max-width: 460px;
-      padding: 44px;
+      max-width: 500px;
+      padding: 52px;
       position: relative;
-      animation: modalIn 0.28s ease;
+      animation: modalIn 0.3s cubic-bezier(.22,.68,0,1.1);
+      box-shadow: 0 24px 60px rgba(160,130,60,0.12);
+    }
+
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
     }
 
     @keyframes modalIn {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0);    }
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
     }
 
     .modal-close {
       position: absolute;
-      top: 18px; right: 22px;
+      top: 20px; right: 24px;
       background: none;
-      border: none;
+      border: 1px solid var(--border);
       color: var(--muted);
-      font-size: 1rem;
+      width: 30px; height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      transition: color 0.2s;
-      line-height: 1;
+      transition: all 0.2s;
+      font-size: 0.7rem;
     }
+    .modal-close:hover { border-color: var(--gold); color: var(--gold); }
 
-    .modal-close:hover { color: var(--gold); }
+    .modal-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.48em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.6;
+      margin-bottom: 10px;
+    }
 
     .modal-title {
       font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
+      font-size: 1.9rem;
       font-weight: 900;
       color: var(--parch);
-      margin-bottom: 28px;
+      line-height: 1;
+      margin-bottom: 36px;
     }
+    .modal-title em { font-style: italic; font-weight: 400; color: var(--gold); }
 
     /* ── FORM ────────────────────────────────────── */
-    .field { margin-bottom: 18px; }
+    .field { margin-bottom: 20px; }
 
     .field-label {
       display: block;
       font-family: 'Cinzel', serif;
-      font-size: 0.5rem;
+      font-size: 0.56rem;
       letter-spacing: 0.38em;
       text-transform: uppercase;
       color: var(--gold);
-      opacity: 0.75;
-      margin-bottom: 8px;
+      opacity: 0.7;
+      margin-bottom: 10px;
     }
 
     .field-input,
     .field-select {
       display: block;
       width: 100%;
-      padding: 13px 16px;
-      background: rgba(14,11,7,0.9);
-      border: 1px solid rgba(201,168,76,0.2);
+      padding: 14px 18px;
+      background: var(--deep);
+      border: 1px solid var(--border-mid);
       color: var(--parch);
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
+      font-size: 1.15rem;
+      font-weight: 400;
       outline: none;
-      transition: border-color 0.25s;
+      transition: border-color 0.25s, box-shadow 0.25s;
       -webkit-appearance: none;
     }
-
-    .field-input::placeholder { color: var(--muted); opacity: 0.45; }
-
+    .field-input::placeholder { color: var(--muted); opacity: 0.4; font-style: italic; }
     .field-input:focus,
-    .field-select:focus { border-color: rgba(201,168,76,0.5); }
-
+    .field-select:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
+    }
     .field-select { cursor: pointer; }
-    .field-select option { background: #1C1610; }
+    .field-select option { background: #FFFFFF; color: var(--parch); }
+
+    .modal-divider { height: 1px; background: var(--border); margin: 28px 0; }
 
     .modal-actions {
       display: flex;
       gap: 10px;
       justify-content: flex-end;
-      margin-top: 28px;
     }
 
     /* ── RESPONSIVE ──────────────────────────────── */
     @media (max-width: 768px) {
-      .container { padding: 28px 20px 60px; }
       header     { padding: 0 20px; }
-      .table-head,
-      .table-row { grid-template-columns: 1fr 1fr; }
+      .container { padding: 32px 20px 60px; }
+      .table-head, .table-row { grid-template-columns: 1fr 1fr; }
       .table-head span:nth-child(n+3),
       .table-row .table-cell:nth-child(n+3) { display: none; }
+      .modal { padding: 32px 24px; }
     }
   </style>
 </head>
@@ -445,17 +514,27 @@
 
 <!-- ── HEADER ──────────────────────────────────── -->
 <header>
-  <span class="header-brand">Academia VeritasWay</span>
+  <div class="header-left">
+    <span class="header-glyph">✦</span>
+    <span class="header-brand">Academia VeritasWay</span>
+    <div class="header-sep"></div>
+    <span class="header-page">Alunos</span>
+  </div>
   <button class="btn btn-gold" onclick="abrirNovo()">+ Novo Aluno</button>
 </header>
 
 <!-- ── MAIN ────────────────────────────────────── -->
 <div class="container">
 
-  <div class="page-header">
+  <div class="page-hero">
     <div>
-      <p class="page-eyebrow">Gestão · Alunos</p>
+      <div class="page-eyebrow">
+        <span class="eyebrow-line"></span>
+        Gestão · Alunos
+        <span class="eyebrow-line"></span>
+      </div>
       <h1 class="page-title">Gerenciar <em>Alunos</em></h1>
+      <p class="page-desc">Cadastre, organize e administre os alunos da plataforma.</p>
     </div>
   </div>
 
@@ -490,27 +569,28 @@
 <div class="overlay" id="overlay" onclick="overlayClick(event)">
   <div class="modal">
     <button class="modal-close" onclick="fecharModal()">✕</button>
-    <h2 class="modal-title" id="tituloModal">Novo Aluno</h2>
+    <div class="modal-eyebrow" id="modalEyebrow">Novo aluno</div>
+    <h2 class="modal-title" id="tituloModal">Adicionar <em>Aluno</em></h2>
 
     <div class="field">
       <label class="field-label">Nome</label>
       <input class="field-input" id="nome" placeholder="Nome completo">
     </div>
-
     <div class="field">
       <label class="field-label">E-mail</label>
       <input class="field-input" id="email" type="email" placeholder="email@exemplo.com">
     </div>
-
     <div class="field">
       <label class="field-label">Turma</label>
       <select class="field-select" id="turma"></select>
     </div>
 
+    <div class="modal-divider"></div>
+
     <div class="modal-actions">
-      <button class="btn btn-danger"  id="btnExcluir" style="display:none; margin-right:auto" onclick="excluirAtual()">Excluir</button>
+      <button class="btn btn-danger" id="btnExcluir" style="display:none; margin-right:auto" onclick="excluirAtual()">Excluir</button>
       <button class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
-      <button class="btn btn-gold"    onclick="salvar()">Salvar</button>
+      <button class="btn btn-gold" id="btnSalvar" onclick="salvar()">Salvar</button>
     </div>
   </div>
 </div>
@@ -519,75 +599,76 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  // ── Config ────────────────────────────────────────
-  const SUPABASE_URL = "COLE_AQUI_URL";
-  const SUPABASE_KEY = "COLE_AQUI_KEY";
+  // ─────────────────────────────────────────────────
+  // Script corrigido — turma_id enviado como UUID correto
+  // ─────────────────────────────────────────────────
+  const SUPABASE_URL = "https://aapgvdmecbuufaxdmqtq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_CXvxw1HWYE6_uuLnlZWLaA_xJ_evCCy";
 
-  // ── State ─────────────────────────────────────────
-  // Declarados ANTES do client para que os botões do HTML
-  // nunca encontrem variáveis não inicializadas
-  var alunos   = [];
-  var turmas   = [];
-  var editando = null;
-  var client   = null;
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Client criado separadamente para não bloquear o script
-  // caso o CDN demore ou falhe
-  try {
-    client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  } catch(e) {
-    console.warn("Supabase não disponível:", e.message);
-  }
+  let alunos   = [];
+  let turmas   = [];
+  let editando = null;
+  let salvando = false;
 
-  // ── carregarTurmas (igual ao original) ───────────
+  // ── carregarTurmas ────────────────────────────────
   async function carregarTurmas() {
-    if (!client) return;
-    let { data } = await client.from("turmas").select("*");
+    const { data, error } = await client
+      .from("turmas")
+      .select("id,nome")
+      .order("nome", { ascending: true });
+
+    if (error) { console.error("Erro ao carregar turmas:", error); toast("Erro ao carregar turmas", true); return; }
+
     turmas = data || [];
 
-    const select = document.getElementById("turma");
-    const filtro = document.getElementById("filtroTurma");
+    const selectTurma = document.getElementById("turma");
+    const filtroTurma = document.getElementById("filtroTurma");
 
-    select.innerHTML = '<option value="">Sem turma</option>';
-    filtro.innerHTML = '<option value="">Todas as turmas</option>';
+    selectTurma.innerHTML = `<option value="">Selecione uma turma</option>`;
+    filtroTurma.innerHTML = `<option value="">Todas as turmas</option>`;
 
-    turmas.forEach(t => {
-      select.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
-      filtro.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
+    turmas.forEach((t) => {
+      selectTurma.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
+      filtroTurma.innerHTML += `<option value="${t.id}">${t.nome}</option>`;
     });
   }
 
-  // ── carregarAlunos (igual ao original) ───────────
+  // ── carregarAlunos ────────────────────────────────
   async function carregarAlunos() {
-    if (!client) return;
-    let { data } = await client
+    const { data, error } = await client
       .from("alunos")
       .select("*")
       .order("created_at", { ascending: false });
+
+    if (error) { console.error("Erro ao carregar alunos:", error); toast("Erro ao carregar alunos", true); return; }
+
     alunos = data || [];
     render();
   }
 
-  // ── turmaNome (igual ao original) ────────────────
+  // ── turmaNome ─────────────────────────────────────
   function turmaNome(id) {
-    let t = turmas.find(x => x.id == id);
-    return t ? t.nome : null;
+    const turma = turmas.find((t) => String(t.id) === String(id));
+    return turma ? turma.nome : null;
   }
 
   // ── iniciais ──────────────────────────────────────
   function iniciais(nome) {
-    return (nome || "?").split(" ").filter(Boolean)
-      .slice(0, 2).map(p => p[0].toUpperCase()).join("");
+    return (nome || "?").split(" ").filter(Boolean).slice(0,2).map(p => p[0].toUpperCase()).join("");
   }
 
-  // ── render (lógica igual ao original) ────────────
+  // ── render ────────────────────────────────────────
   function render() {
-    let busca = document.getElementById("busca").value.toLowerCase();
-    let turma = document.getElementById("filtroTurma").value;
+    const busca = document.getElementById("busca").value.toLowerCase();
+    const turma = document.getElementById("filtroTurma").value;
 
-    let lista = alunos.filter(a => {
-      let okBusca = !busca || (a.nome || "").toLowerCase().includes(busca);
-      let okTurma = !turma || a.turma_id == turma;
+    const lista = alunos.filter((a) => {
+      const okBusca = !busca ||
+        (a.nome  || "").toLowerCase().includes(busca) ||
+        (a.email || "").toLowerCase().includes(busca);
+      const okTurma = !turma || String(a.turma_id) === String(turma);
       return okBusca && okTurma;
     });
 
@@ -596,11 +677,11 @@
     if (!lista.length) {
       el.innerHTML = `
         <div class="state-box">
-          <div class="state-glyph">✦</div>
+          <div class="state-ornament">✦ ✦ ✦</div>
           <p class="state-text">Nenhum aluno encontrado.</p>
         </div>`;
     } else {
-      el.innerHTML = lista.map(a => {
+      el.innerHTML = lista.map((a) => {
         const tn = turmaNome(a.turma_id);
         return `
           <div class="table-row">
@@ -627,31 +708,38 @@
     }
 
     const n = lista.length;
-    document.getElementById("countText").textContent =
-      n + (n === 1 ? " aluno" : " alunos");
+    document.getElementById("countText").textContent = n + (n === 1 ? " aluno" : " alunos");
   }
 
-  // ── abrirNovo (igual ao original) ────────────────
+  // ── abrirNovo ─────────────────────────────────────
   function abrirNovo() {
     editando = null;
-    document.getElementById("tituloModal").textContent = "Novo Aluno";
+    document.getElementById("modalEyebrow").textContent = "Novo aluno";
+    document.getElementById("tituloModal").innerHTML    = "Adicionar <em>Aluno</em>";
     document.getElementById("nome").value  = "";
     document.getElementById("email").value = "";
     document.getElementById("turma").value = "";
     document.getElementById("btnExcluir").style.display = "none";
+    document.getElementById("btnSalvar").textContent    = "Salvar";
+    document.getElementById("btnSalvar").disabled       = false;
     document.getElementById("overlay").classList.add("open");
     document.body.style.overflow = "hidden";
   }
 
-  // ── editar (igual ao original) ────────────────────
+  // ── editar ────────────────────────────────────────
   function editar(id) {
-    let a = alunos.find(x => x.id == id);
+    const a = alunos.find((x) => String(x.id) === String(id));
+    if (!a) return;
+
     editando = id;
-    document.getElementById("tituloModal").textContent = "Editar Aluno";
-    document.getElementById("nome").value  = a.nome      || "";
-    document.getElementById("email").value = a.email     || "";
-    document.getElementById("turma").value = a.turma_id  || "";
+    document.getElementById("modalEyebrow").textContent = "Editar aluno";
+    document.getElementById("tituloModal").innerHTML    = "Editar <em>Aluno</em>";
+    document.getElementById("nome").value  = a.nome  || "";
+    document.getElementById("email").value = a.email || "";
+    document.getElementById("turma").value = a.turma_id || "";
     document.getElementById("btnExcluir").style.display = "inline-flex";
+    document.getElementById("btnSalvar").textContent    = "Salvar";
+    document.getElementById("btnSalvar").disabled       = false;
     document.getElementById("overlay").classList.add("open");
     document.body.style.overflow = "hidden";
   }
@@ -666,73 +754,88 @@
     if (e.target === document.getElementById("overlay")) fecharModal();
   }
 
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape") fecharModal();
-  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") fecharModal(); });
 
-  // ── salvar (igual ao original, + toast) ──────────
+  // ── salvar ────────────────────────────────────────
   async function salvar() {
-    let nome  = document.getElementById("nome").value;
-    let email = document.getElementById("email").value;
-    let turma = document.getElementById("turma").value;
+    if (salvando) return;
 
-    if (!nome || !email) {
-      toast("Preencha nome e e-mail", true);
-      return;
-    }
+    const nome  = document.getElementById("nome").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const turma = document.getElementById("turma").value || null;
 
-    if (editando) {
-      await client.from("alunos")
+    if (!nome || !email) { toast("Preencha nome e e-mail", true); return; }
+
+    // Captura editando ANTES de fechar
+    const idEditando = editando;
+
+    salvando = true;
+    document.getElementById("btnSalvar").textContent = "Salvando…";
+    document.getElementById("btnSalvar").disabled    = true;
+
+    let error;
+
+    if (idEditando) {
+      ({ error } = await client.from("alunos")
         .update({ nome, email, turma_id: turma })
-        .eq("id", editando);
+        .eq("id", idEditando));
     } else {
-      await client.from("alunos")
-        .insert({ nome, email, turma_id: turma });
+      ({ error } = await client.from("alunos")
+        .insert([{ nome, email, turma_id: turma }]));
     }
+
+    salvando = false;
+    document.getElementById("btnSalvar").textContent = "Salvar";
+    document.getElementById("btnSalvar").disabled    = false;
+
+    if (error) { console.error(error); toast("Erro ao salvar aluno", true); return; }
 
     fecharModal();
-    toast(editando ? "Aluno atualizado" : "Aluno cadastrado");
+    editando = null;
+    toast(idEditando ? "Aluno atualizado" : "Aluno cadastrado");
     await carregarAlunos();
   }
 
-  // ── excluir (igual ao original, + toast) ─────────
+  // ── excluir ───────────────────────────────────────
   async function excluir(id) {
     if (!confirm("Excluir aluno?")) return;
-    await client.from("alunos").delete().eq("id", id);
+    const { error } = await client.from("alunos").delete().eq("id", id);
+    if (error) { console.error(error); toast("Erro ao excluir aluno", true); return; }
     toast("Aluno removido");
     await carregarAlunos();
   }
 
-  // Botão excluir dentro do modal
   async function excluirAtual() {
     if (!editando) return;
     fecharModal();
     await excluir(editando);
+    editando = null;
   }
 
   // ── Toast ─────────────────────────────────────────
   let toastTimer;
-  function toast(msg, isError = false) {
+  function toast(msg, isError) {
     const el = document.getElementById("toast");
     el.textContent = msg;
     el.className   = "toast show" + (isError ? " error" : "");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { el.className = "toast"; }, 3000);
+    toastTimer = setTimeout(() => { el.className = "toast"; }, 3200);
   }
 
-  // ── Skeleton enquanto carrega ─────────────────────
+  // ── Skeleton ──────────────────────────────────────
   function renderSkeleton() {
-    document.getElementById("lista").innerHTML = Array.from({ length: 5 }).map(() => `
-      <div class="skeleton-row">
-        <div class="skel" style="width:55%"></div>
-        <div class="skel" style="width:65%"></div>
-        <div class="skel" style="width:40%"></div>
-        <div class="skel" style="width:80px"></div>
-      </div>`).join("");
+    document.getElementById("lista").innerHTML =
+      Array.from({ length: 5 }).map(() => `
+        <div class="skeleton-row">
+          <div class="skel" style="width:52%"></div>
+          <div class="skel" style="width:65%"></div>
+          <div class="skel" style="width:40%"></div>
+          <div class="skel" style="width:85px"></div>
+        </div>`).join("");
     document.getElementById("countText").textContent = "carregando…";
   }
 
-  // ── init (igual ao original) ──────────────────────
+  // ── init ──────────────────────────────────────────
   async function init() {
     renderSkeleton();
     await carregarTurmas();
