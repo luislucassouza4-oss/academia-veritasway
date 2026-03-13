@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Academia VeritasWay • Igrejas</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold:        #C9A84C;
+      --gold-light:  #E8C97A;
+      --deep:        #F8F4EE;
+      --surface:     #FFFFFF;
+      --card:        #F2EDE5;
+      --border:      rgba(160,130,60,0.18);
+      --border-mid:  rgba(160,130,60,0.32);
+      --border-hov:  rgba(160,130,60,0.55);
+      --parch:       #1A1208;
+      --parch-dim:   #3D2E1A;
+      --muted:       #7A6A52;
+      --green:       #4A8A5A;
+      --green-bg:    rgba(74,138,90,0.10);
+      --red:         #A05050;
+      --red-border:  rgba(160,80,80,0.28);
+      --red-bg:      rgba(160,80,80,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--deep);
+      color: var(--parch);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ──────────────────────────────────── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 60px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      box-shadow: 0 1px 12px rgba(160,130,60,0.07);
+    }
+
+    .header-left { display: flex; align-items: center; gap: 18px; }
+    .header-glyph { font-size: 0.75rem; color: var(--gold); opacity: 0.45; }
+    .header-brand { font-family: 'Cinzel', serif; font-size: 0.82rem; letter-spacing: 0.28em; color: var(--gold); text-transform: uppercase; }
+    .header-sep   { width: 1px; height: 18px; background: var(--border-mid); }
+    .header-page  { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.22em; color: var(--muted); text-transform: uppercase; }
+
+    /* ── BUTTONS ─────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      border: none;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #C9A84C, #B0903A);
+      color: #FFF8EC;
+      box-shadow: 0 2px 14px rgba(201,168,76,0.22);
+    }
+    .btn-gold:hover { background: linear-gradient(135deg, #E8C97A, #C9A84C); transform: translateY(-1px); }
+    .btn-gold:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    .btn-outline { background: transparent; border: 1px solid var(--border-mid); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    .btn-danger { background: transparent; border: 1px solid var(--red-border); color: var(--red); }
+    .btn-danger:hover { background: var(--red-bg); }
+
+    .btn-sm { padding: 8px 16px; font-size: 0.56rem; }
+
+    /* ── LAYOUT ──────────────────────────────────── */
+    .container { max-width: 1180px; margin: 0 auto; padding: 52px 60px 100px; }
+
+    /* ── PAGE HERO ───────────────────────────────── */
+    .page-hero {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 44px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .page-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.45em;
+      color: var(--gold);
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow-line { width: 24px; height: 1px; background: var(--gold); opacity: 0.4; }
+
+    .page-title { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 4vw, 3.4rem); font-weight: 900; color: var(--parch); line-height: 0.95; }
+    .page-title em { font-style: italic; color: var(--gold); font-weight: 400; }
+    .page-desc { font-size: 1.05rem; color: var(--muted); font-style: italic; line-height: 1.8; margin-top: 10px; font-weight: 300; }
+
+    /* ── STATS ───────────────────────────────────── */
+    .stats-row {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 32px;
+      background: var(--border);
+    }
+
+    .stat-item {
+      flex: 1;
+      background: var(--surface);
+      padding: 24px 28px;
+      transition: background 0.22s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .stat-item:hover { background: #FDFAF5; }
+    .stat-item:hover::after { opacity: 0.5; }
+
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 6px; }
+    .stat-label { font-family: 'Cinzel', serif; font-size: 0.54rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); }
+
+    /* ── FILTER BAR ──────────────────────────────── */
+    .filter-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 18px; flex-wrap: wrap; }
+
+    .search-wrap {
+      display: flex;
+      border: 1px solid var(--border-mid);
+      flex: 1;
+      min-width: 200px;
+      max-width: 380px;
+      background: var(--surface);
+      transition: border-color 0.25s;
+    }
+    .search-wrap:focus-within { border-color: var(--gold); }
+
+    .search-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--parch);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+    }
+    .search-input::placeholder { color: var(--muted); opacity: 0.5; }
+
+    .search-icon { padding: 12px 14px; color: var(--muted); display: flex; align-items: center; font-size: 0.9rem; }
+
+    .filter-select {
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      color: var(--muted);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      outline: none;
+      cursor: pointer;
+      -webkit-appearance: none;
+      min-width: 180px;
+      transition: border-color 0.22s;
+    }
+    .filter-select:focus { border-color: var(--gold); }
+    .filter-select option { background: #FFFFFF; color: var(--parch); }
+
+    /* ── TABLE ───────────────────────────────────── */
+    .table-wrap { background: var(--border); display: flex; flex-direction: column; gap: 1px; }
+
+    .table-head {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1.4fr 1.4fr 100px 140px;
+      background: rgba(201,168,76,0.07);
+      border-bottom: 1px solid var(--border-mid);
+    }
+
+    .table-head span {
+      padding: 13px 18px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.56rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1.4fr 1.4fr 100px 140px;
+      background: var(--surface);
+      align-items: center;
+      transition: background 0.2s, border-color 0.2s;
+      border-left: 2px solid transparent;
+    }
+
+    .table-row:hover { background: rgba(201,168,76,0.04); border-left-color: rgba(201,168,76,0.35); }
+
+    .table-cell { padding: 15px 18px; }
+
+    /* Nome cell */
+    .nome-wrap { display: flex; align-items: center; gap: 12px; }
+
+    .igreja-inicial {
+      width: 36px; height: 36px;
+      flex-shrink: 0;
+      border: 1px solid var(--border-mid);
+      background: linear-gradient(135deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      color: var(--gold);
+    }
+
+    .nome-val   { font-size: 1.05rem; font-weight: 600; color: var(--parch); }
+    .sigla-val  { font-size: 0.82rem; color: var(--muted); font-style: italic; margin-top: 2px; }
+    .local-val  { font-size: 1rem; color: var(--parch-dim); }
+    .pastor-val { font-size: 0.98rem; color: var(--muted); font-style: italic; }
+    .none-val   { color: var(--muted); font-style: italic; opacity: 0.45; font-size: 0.95rem; }
+
+    /* Status badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.46rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      border: 1px solid;
+    }
+
+    .badge-ativa   { color: var(--green); border-color: rgba(74,138,90,0.3); background: var(--green-bg); }
+    .badge-inativa { color: var(--muted); border-color: var(--border-mid); background: var(--card); }
+
+    .cell-actions { display: flex; gap: 6px; }
+
+    .table-footer {
+      background: var(--surface);
+      padding: 13px 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .count-text { font-family: 'Cinzel', serif; font-size: 0.56rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); opacity: 0.65; }
+
+    /* ── STATES ──────────────────────────────────── */
+    .state-box { background: var(--surface); padding: 72px 40px; text-align: center; }
+    .state-ornament { font-size: 1rem; color: var(--gold); opacity: 0.18; margin-bottom: 16px; letter-spacing: 0.5em; }
+    .state-text { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--muted); font-style: italic; }
+
+    /* ── SKELETON ────────────────────────────────── */
+    .skeleton-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1.4fr 1.4fr 100px 140px;
+      background: var(--surface);
+      padding: 18px;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .skel {
+      height: 13px;
+      background: linear-gradient(90deg, rgba(160,130,60,0.06) 25%, rgba(160,130,60,0.14) 50%, rgba(160,130,60,0.06) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.8s infinite ease-in-out;
+      border-radius: 2px;
+    }
+
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* ── TOAST ───────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 36px; right: 36px;
+      background: var(--surface);
+      border: 1px solid var(--border-hov);
+      padding: 16px 28px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.32s cubic-bezier(.22,.68,0,1.2);
+      pointer-events: none;
+      z-index: 300;
+      box-shadow: 0 8px 32px rgba(160,130,60,0.14);
+    }
+
+    .toast::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .toast.show  { opacity: 1; transform: translateY(0); }
+    .toast.error { color: var(--red); border-color: var(--red-border); }
+    .toast.error::before { background: linear-gradient(90deg, transparent, var(--red), transparent); }
+
+    /* ── MODAL ───────────────────────────────────── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(20,14,6,0.65);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border-mid);
+      width: 100%;
+      max-width: 580px;
+      padding: 52px;
+      position: relative;
+      animation: modalIn 0.3s cubic-bezier(.22,.68,0,1.1);
+      box-shadow: 0 24px 60px rgba(160,130,60,0.12);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px; right: 24px;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.7rem;
+    }
+    .modal-close:hover { border-color: var(--gold); color: var(--gold); }
+
+    .modal-eyebrow { font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.48em; text-transform: uppercase; color: var(--gold); opacity: 0.58; margin-bottom: 10px; }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: 1.85rem; font-weight: 900; color: var(--parch); line-height: 1; margin-bottom: 32px; }
+    .modal-title em { font-style: italic; font-weight: 400; color: var(--gold); }
+
+    /* ── FORM ────────────────────────────────────── */
+    .field { margin-bottom: 18px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .field-label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.65;
+      margin-bottom: 9px;
+    }
+
+    .field-input,
+    .field-select {
+      display: block;
+      width: 100%;
+      padding: 13px 16px;
+      background: var(--deep);
+      border: 1px solid var(--border-mid);
+      color: var(--parch);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      -webkit-appearance: none;
+    }
+
+    .field-input::placeholder { color: var(--muted); opacity: 0.38; font-style: italic; }
+    .field-input:focus, .field-select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.07); }
+    .field-select { cursor: pointer; }
+    .field-select option { background: #FFF; color: var(--parch); }
+
+    .modal-divider { height: 1px; background: var(--border); margin: 26px 0; }
+
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+    /* ── RESPONSIVE ──────────────────────────────── */
+    @media (max-width: 1024px) {
+      .table-head, .table-row { grid-template-columns: 2fr 1.2fr 1.2fr 110px 130px; }
+      .table-head span:nth-child(4), .table-row .table-cell:nth-child(4) { display: none; }
+    }
+
+    @media (max-width: 768px) {
+      header     { padding: 0 20px; }
+      .container { padding: 32px 20px 60px; }
+      .table-head, .table-row { grid-template-columns: 1fr 1fr; }
+      .table-head span:nth-child(n+3), .table-row .table-cell:nth-child(n+3) { display: none; }
+      .stats-row  { flex-wrap: wrap; }
+      .stat-item  { min-width: 45%; }
+      .modal      { padding: 32px 24px; }
+      .field-row  { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────── -->
+<header>
+  <div class="header-left">
+    <span class="header-glyph">✦</span>
+    <span class="header-brand">Academia VeritasWay</span>
+    <div class="header-sep"></div>
+    <span class="header-page">Igrejas</span>
+  </div>
+  <button class="btn btn-gold" onclick="abrirNova()">+ Nova Igreja</button>
+</header>
+
+<!-- ── MAIN ────────────────────────────────────── -->
+<div class="container">
+
+  <div class="page-hero">
+    <div>
+      <div class="page-eyebrow">
+        <span class="eyebrow-line"></span>
+        Gestão · Igrejas
+        <span class="eyebrow-line"></span>
+      </div>
+      <h1 class="page-title">Gerenciar <em>Igrejas</em></h1>
+      <p class="page-desc">Cadastre e administre as igrejas parceiras da plataforma.</p>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-item">
+      <div class="stat-num" id="statTotal">—</div>
+      <div class="stat-label">Total de igrejas</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statAtivas">—</div>
+      <div class="stat-label">Ativas</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statInativas">—</div>
+      <div class="stat-label">Inativas</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <input class="search-input" id="busca" placeholder="Buscar por nome, cidade ou pastor…" oninput="render()">
+      <div class="search-icon">🔍</div>
+    </div>
+    <select class="filter-select" id="filtroStatus" onchange="render()">
+      <option value="">Todos os status</option>
+      <option value="ativa">Ativas</option>
+      <option value="inativa">Inativas</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <div class="table-head">
+      <span>Igreja</span>
+      <span>Cidade / Estado</span>
+      <span>Pastor</span>
+      <span>Contato</span>
+      <span>Status</span>
+      <span>Ações</span>
+    </div>
+    <div id="lista"></div>
+    <div class="table-footer">
+      <span class="count-text" id="countText">—</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── MODAL ────────────────────────────────────── -->
+<div class="overlay" id="overlay" onclick="overlayClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal()">✕</button>
+    <div class="modal-eyebrow" id="modalEyebrow">Nova igreja</div>
+    <h2 class="modal-title" id="tituloModal">Adicionar <em>Igreja</em></h2>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">Nome</label>
+        <input class="field-input" id="fNome" placeholder="Nome da igreja">
+      </div>
+      <div class="field">
+        <label class="field-label">Sigla</label>
+        <input class="field-input" id="fSigla" placeholder="Ex: IEB">
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">Cidade</label>
+        <input class="field-input" id="fCidade" placeholder="Cidade">
+      </div>
+      <div class="field">
+        <label class="field-label">Estado</label>
+        <input class="field-input" id="fEstado" placeholder="Ex: SP">
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Pastor Responsável</label>
+      <input class="field-input" id="fPastor" placeholder="Nome do pastor">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">E-mail</label>
+        <input class="field-input" id="fEmail" type="email" placeholder="email@igreja.com">
+      </div>
+      <div class="field">
+        <label class="field-label">Telefone</label>
+        <input class="field-input" id="fTelefone" placeholder="(00) 00000-0000">
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Status</label>
+      <select class="field-select" id="fStatus">
+        <option value="ativa">Ativa</option>
+        <option value="inativa">Inativa</option>
+      </select>
+    </div>
+
+    <div class="modal-divider"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-danger" id="btnExcluir" style="display:none; margin-right:auto" onclick="excluirAtual()">Excluir</button>
+      <button class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-gold"   id="btnSalvar"  onclick="salvar()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ─────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const SUPABASE_URL = "https://aapgvdmecbuufaxdmqtq.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_CXvxw1HWYE6_uuLnlZWLaA_xJ_evCCy";
+
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  let igrejas  = [];
+  let editando = null;
+  let salvando = false;
+  let toastTimer;
+
+  // ── Carregar ──────────────────────────────────────
+  async function carregarIgrejas() {
+    const { data, error } = await client
+      .from("igrejas")
+      .select("*")
+      .order("nome", { ascending: true });
+
+    if (error) { console.error(error); toast("Erro ao carregar igrejas: " + error.message, true); return; }
+
+    igrejas = data || [];
+    atualizarStats();
+    render();
+  }
+
+  // ── Stats ─────────────────────────────────────────
+  function atualizarStats() {
+    document.getElementById("statTotal").textContent   = igrejas.length;
+    document.getElementById("statAtivas").textContent  = igrejas.filter(i => i.status === "ativa").length;
+    document.getElementById("statInativas").textContent = igrejas.filter(i => i.status !== "ativa").length;
+  }
+
+  // ── Helpers ───────────────────────────────────────
+  function inicial(nome) { return (nome || "?")[0].toUpperCase(); }
+
+  function localStr(i) {
+    if (i.cidade && i.estado) return i.cidade + " · " + i.estado;
+    return i.cidade || i.estado || null;
+  }
+
+  // ── Render ────────────────────────────────────────
+  function render() {
+    const busca  = document.getElementById("busca").value.toLowerCase();
+    const status = document.getElementById("filtroStatus").value;
+
+    const lista = igrejas.filter(i => {
+      const okBusca = !busca ||
+        (i.nome             || "").toLowerCase().includes(busca) ||
+        (i.cidade           || "").toLowerCase().includes(busca) ||
+        (i.pastor_responsavel || "").toLowerCase().includes(busca);
+      const okStatus = !status || i.status === status;
+      return okBusca && okStatus;
+    });
+
+    const el = document.getElementById("lista");
+
+    if (!lista.length) {
+      el.innerHTML = `
+        <div class="state-box">
+          <div class="state-ornament">✦ ✦ ✦</div>
+          <p class="state-text">Nenhuma igreja encontrada.</p>
+        </div>`;
+    } else {
+      el.innerHTML = lista.map(i => {
+        const loc   = localStr(i);
+        const badge = i.status === "ativa"
+          ? `<span class="badge badge-ativa">Ativa</span>`
+          : `<span class="badge badge-inativa">Inativa</span>`;
+
+        return `
+          <div class="table-row">
+            <div class="table-cell">
+              <div class="nome-wrap">
+                <div class="igreja-inicial">${inicial(i.nome)}</div>
+                <div>
+                  <div class="nome-val">${i.nome || "—"}</div>
+                  ${i.sigla ? `<div class="sigla-val">${i.sigla}</div>` : ""}
+                </div>
+              </div>
+            </div>
+            <div class="table-cell">
+              <span class="${loc ? 'local-val' : 'none-val'}">${loc || "—"}</span>
+            </div>
+            <div class="table-cell">
+              <span class="${i.pastor_responsavel ? 'pastor-val' : 'none-val'}">${i.pastor_responsavel || "—"}</span>
+            </div>
+            <div class="table-cell">
+              <span class="${i.email ? 'pastor-val' : 'none-val'}">${i.email || "—"}</span>
+            </div>
+            <div class="table-cell">${badge}</div>
+            <div class="table-cell">
+              <div class="cell-actions">
+                <button class="btn btn-outline btn-sm" onclick="editar('${i.id}')">Editar</button>
+                <button class="btn btn-danger  btn-sm" onclick="excluir('${i.id}')">Excluir</button>
+              </div>
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    const n = lista.length;
+    document.getElementById("countText").textContent = n + (n === 1 ? " igreja" : " igrejas");
+  }
+
+  // ── Modal ─────────────────────────────────────────
+  function abrirNova() {
+    editando = null;
+    document.getElementById("modalEyebrow").textContent = "Nova igreja";
+    document.getElementById("tituloModal").innerHTML    = "Adicionar <em>Igreja</em>";
+    ["fNome","fSigla","fCidade","fEstado","fPastor","fEmail","fTelefone"].forEach(id => document.getElementById(id).value = "");
+    document.getElementById("fStatus").value = "ativa";
+    document.getElementById("btnExcluir").style.display = "none";
+    document.getElementById("btnSalvar").textContent    = "Salvar";
+    document.getElementById("btnSalvar").disabled       = false;
+    document.getElementById("overlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function editar(id) {
+    const i = igrejas.find(x => x.id === id);
+    if (!i) return;
+
+    editando = id;
+    document.getElementById("modalEyebrow").textContent    = "Editar igreja";
+    document.getElementById("tituloModal").innerHTML       = "Editar <em>Igreja</em>";
+    document.getElementById("fNome").value                 = i.nome                || "";
+    document.getElementById("fSigla").value                = i.sigla               || "";
+    document.getElementById("fCidade").value               = i.cidade              || "";
+    document.getElementById("fEstado").value               = i.estado              || "";
+    document.getElementById("fPastor").value               = i.pastor_responsavel  || "";
+    document.getElementById("fEmail").value                = i.email               || "";
+    document.getElementById("fTelefone").value             = i.telefone            || "";
+    document.getElementById("fStatus").value               = i.status              || "ativa";
+    document.getElementById("btnExcluir").style.display    = "inline-flex";
+    document.getElementById("btnSalvar").textContent       = "Salvar";
+    document.getElementById("btnSalvar").disabled          = false;
+    document.getElementById("overlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function fecharModal() {
+    document.getElementById("overlay").classList.remove("open");
+    document.body.style.overflow = "";
+  }
+
+  function overlayClick(e) {
+    if (e.target === document.getElementById("overlay")) fecharModal();
+  }
+
+  document.addEventListener("keydown", e => { if (e.key === "Escape") fecharModal(); });
+
+  // ── Salvar ────────────────────────────────────────
+  async function salvar() {
+    if (salvando) return;
+
+    const nome   = document.getElementById("fNome").value.trim();
+    if (!nome) { toast("Preencha o nome da igreja", true); return; }
+
+    const payload = {
+      nome,
+      sigla:              document.getElementById("fSigla").value.trim()    || null,
+      cidade:             document.getElementById("fCidade").value.trim()   || null,
+      estado:             document.getElementById("fEstado").value.trim()   || null,
+      pastor_responsavel: document.getElementById("fPastor").value.trim()   || null,
+      email:              document.getElementById("fEmail").value.trim()    || null,
+      telefone:           document.getElementById("fTelefone").value.trim() || null,
+      status:             document.getElementById("fStatus").value,
+    };
+
+    const idEditando = editando;
+
+    salvando = true;
+    document.getElementById("btnSalvar").textContent = "Salvando…";
+    document.getElementById("btnSalvar").disabled    = true;
+
+    let resposta;
+    if (idEditando) {
+      resposta = await client.from("igrejas").update(payload).eq("id", idEditando).select();
+    } else {
+      resposta = await client.from("igrejas").insert([payload]).select();
+    }
+
+    salvando = false;
+    document.getElementById("btnSalvar").textContent = "Salvar";
+    document.getElementById("btnSalvar").disabled    = false;
+
+    if (resposta.error) { console.error(resposta.error); toast("Erro: " + resposta.error.message, true); return; }
+
+    fecharModal();
+    editando = null;
+    toast(idEditando ? "Igreja atualizada" : "Igreja cadastrada");
+    await carregarIgrejas();
+  }
+
+  // ── Excluir ───────────────────────────────────────
+  async function excluir(id) {
+    if (!confirm("Excluir esta igreja?")) return;
+    const { error } = await client.from("igrejas").delete().eq("id", id);
+    if (error) { console.error(error); toast("Erro ao excluir: " + error.message, true); return; }
+    toast("Igreja removida");
+    await carregarIgrejas();
+  }
+
+  async function excluirAtual() {
+    if (!editando) return;
+    const id = editando;
+    fecharModal();
+    editando = null;
+    await excluir(id);
+  }
+
+  // ── Toast ─────────────────────────────────────────
+  function toast(msg, isError = false) {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.className   = "toast show" + (isError ? " error" : "");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.className = "toast"; }, 4000);
+  }
+
+  // ── Skeleton ──────────────────────────────────────
+  function renderSkeleton() {
+    document.getElementById("lista").innerHTML =
+      Array.from({ length: 5 }).map(() => `
+        <div class="skeleton-row">
+          <div class="skel" style="width:55%"></div>
+          <div class="skel" style="width:45%"></div>
+          <div class="skel" style="width:60%"></div>
+          <div class="skel" style="width:50%"></div>
+          <div class="skel" style="width:60px"></div>
+          <div class="skel" style="width:90px"></div>
+        </div>`).join("");
+    document.getElementById("countText").textContent = "carregando…";
+  }
+
+  // ── Init ──────────────────────────────────────────
+  async function init() {
+    renderSkeleton();
+    await carregarIgrejas();
+  }
+
+  init();
+</script>
+</body>
+</html>
